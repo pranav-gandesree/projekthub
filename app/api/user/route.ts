@@ -1,11 +1,19 @@
 import prisma from "@/prisma/prisma";
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
+import * as z from 'zod';
+
+const userSchema = z
+    .object({
+        username: z.string().min(1, 'username is required').max(20),
+        email: z.string().min(1,'email is required').email('Invalid Email'),
+        password: z.string().min(1, 'password is required').min(8, 'password must have more than 8 characters') 
+    })
 
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { email, username, password } = body;
+        const { email, username, password } = userSchema.parse(body);
 
         // Check if email already exists
         const existingUserByEmail = await prisma.user.findUnique({
@@ -40,9 +48,11 @@ export async function POST(req: Request) {
             }
         });
 
+        const {password: newUserPassword, ...rest} = newUser;
+
         return NextResponse.json({
             message: "User created",
-            user: newUser
+            user: rest
         }, { status: 201 });
     } catch (error) {
         return NextResponse.json({

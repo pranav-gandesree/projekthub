@@ -1,8 +1,8 @@
 
 export default function Home() {
   return (
-      <div>
-        hiii
+      <div className="text-2xl">
+        Home 
       </div>
   );
 }
