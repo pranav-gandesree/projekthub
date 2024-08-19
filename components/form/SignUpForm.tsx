@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button"
 import {zodResolver} from "@hookform/resolvers/zod"
 import Link from "next/link"
 import GoogleSignInButton from "@/components/GoogleSignInButton"
+import { useRouter } from "next/navigation"
 
 const FormSchema = z.object({
     username: z.string().min(1,'username is required'),
@@ -24,19 +25,36 @@ const FormSchema = z.object({
 
 
 const SignUpForm = () => {
-
+    const router = useRouter();
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            username: ' ',
-            email: ' ',
-            password: ' '
+            username: '',
+            email: '',
+            password: ''
         },
 
       })
 
-      const onSubmit = (values: z.infer<typeof FormSchema>) =>{
+      const onSubmit = async (values: z.infer<typeof FormSchema>) =>{
         console.log(values)
+        const response = await fetch('/api/user', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application.json'
+          },
+          body: JSON.stringify({
+            username: values.username,
+            email: values.email,
+            password: values.password
+          })
+        })
+
+        if(response.ok){
+          router.push('/signin')
+        }else{
+          console.log("registration failed")
+        }
       }
      
   return (
