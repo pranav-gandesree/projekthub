@@ -5,7 +5,7 @@ import prisma from '@/prisma/prisma';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, description, githubLink, liveLink, isPublic } = body;
+    const { title, description, githubLink, liveLink, isPublic, userId} = body;
 
     const project = await prisma.project.create({
       data: {
@@ -13,8 +13,8 @@ export async function POST(request: Request) {
         description,
         githubLink,
         liveLink,
-        public: isPublic
-        // userId: "your-user-id", // Replace with the actual user ID or session-based logic
+        public: isPublic,
+        userId, 
       },
     });
 

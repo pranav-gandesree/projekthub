@@ -18,11 +18,13 @@ import { Checkbox } from "../ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { useSession } from 'next-auth/react';
+import { useToast } from "@/components/ui/use-toast"
 
 const NewProject = () => {
 
   const { data: session, status } = useSession();
   const [userId, setUserId] = useState<string | null>(null);
+  const { toast } = useToast()
 
   const formSchema = z.object({
     title: z.string().min(2, "Title must be at least 2 characters long"),
@@ -46,7 +48,7 @@ const NewProject = () => {
 
   useEffect(() => {
     if (status === "authenticated") {
-      setUserId(session.user.id || null); // Adjust according to your session structure
+      setUserId(session.user.id || null); 
     }
   }, [session, status]);
 
@@ -58,10 +60,17 @@ const NewProject = () => {
 
     try {
       await axios.post("/api/projects", { ...data, userId });
-      alert("Project created successfully!");
+       toast({
+        title: "Hurrayyy",
+        description: "Project created succesfullyyy!",   
+      })
     } catch (error) {
       console.error("Error creating project:", error);
-      alert("Failed to create project.");
+      toast({
+        title: "Error!",
+        description: "Oops!! Something is wrong",
+        variant: "destructive"
+      })
     }
   };
 

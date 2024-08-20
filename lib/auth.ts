@@ -171,20 +171,19 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt', // Using JWT session strategy
   },
   callbacks: {
-    jwt: async ({ user, token }: any) => {
+    jwt: async ({ user, token }) => {
       if (user) {
-        // Add user ID to the token
-        token.uid = user.id;
+        token.uid = user.id;  // Add the user ID to the token
       }
       return token;
     },
     session: async ({ session, token }: any) => {
       if (session.user) {
-        // Retrieve the user ID from the token and add it to the session
-        session.user.id = token.uid;
+        session.user.id = token.uid;  // Add the user ID to the session
       }
       return session;
     },
+    
   },
   pages: {
     signIn: '/signin',
