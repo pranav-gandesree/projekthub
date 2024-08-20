@@ -1,112 +1,6 @@
-// "use client"
-// import {
-//     Form,
-//     FormControl,
-//     FormField,
-//     FormItem,
-//     FormDescription,
-//     FormLabel,
-//     FormMessage,
-//   } from "@/components/ui/form";
-//   import { zodResolver } from "@hookform/resolvers/zod"
-//   import { Input } from "@/components/ui/input"
-//   import { Button } from "../ui/button";
-//   import { useForm } from "react-hook-form"
-//   import { z } from "zod"
-// import { Checkbox } from "../ui/checkbox";
-
-// const NewProject = () => {
-
-//     const formSchema = z.object({
-//       username: z.string().min(2, {
-//         message: "Username must be at least 2 characters.",
-//       }),
-//     })
-
-//     const form = useForm<z.infer<typeof formSchema>>({
-//         resolver: zodResolver(formSchema),
-//         defaultValues: {
-//           username: "",
-//         },
-//       })
-
-       
-//     const onSubmit = () =>{
-
-//     }
-    
-//   return (
-//     <div className="border border-slate-300 w-96">
-
-//     <Form {...form}>
-//         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-//             <FormField
-//             control={form.control}
-//             name="username"
-//             render={({ field }) => (
-//                 <FormItem>
-//                 <FormLabel>Title</FormLabel>
-//                 <FormControl>
-//                     <Input placeholder="shadcn" {...field} />
-//                 </FormControl>
-//                 <FormMessage />
-//                 </FormItem>
-//             )}
-//             />
-//             <FormField
-//             control={form.control}
-//             name="username"
-//             render={({ field }) => (
-//                 <FormItem>
-//                 <FormLabel>Description</FormLabel>
-//                 <FormControl>
-//                     <Input placeholder="shadcn" {...field} />
-//                 </FormControl>
-//                 <FormMessage />
-//                 </FormItem>
-//             )}
-//             />
-//             <FormField
-//             control={form.control}
-//             name="username"
-//             render={({ field }) => (
-//                 <FormItem>
-//                 <FormLabel>Github Link</FormLabel>
-//                 <FormControl>
-//                     <Input placeholder="shadcn" {...field} />
-//                 </FormControl>
-//                 <FormMessage />
-//                 </FormItem>
-//             )}
-//             />
-//             <FormField
-//             control={form.control}
-//             name="username"
-//             render={({ field }) => (
-//                 <FormItem>
-//                 <FormLabel>Live Link</FormLabel>
-//                 <FormControl>
-//                     <Input placeholder="shadcn" {...field} />
-//                 </FormControl>
-//                 <FormMessage />
-//                 </FormItem>
-//             )}
-//             />
-//             <Checkbox />
-
-//             <Button type="submit">Create</Button>
-//         </form>
-//         </Form>
-
-//     </div>
-//   )
-// }
-
-// export default NewProject
-
-
 
 "use client";
+import { useEffect, useState } from "react";
 import {
   Form,
   FormControl,
@@ -122,22 +16,55 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Checkbox } from "../ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
+import axios from "axios";
+import { useSession } from 'next-auth/react';
 
 const NewProject = () => {
+
+  const { data: session, status } = useSession();
+  const [userId, setUserId] = useState<string | null>(null);
+
   const formSchema = z.object({
-    username: z.string().min(2, {
-      message: "Username must be at least 2 characters.",
-    }),
+    title: z.string().min(2, "Title must be at least 2 characters long"),
+    description: z.string().min(10, "Description must be at least 10 characters long"),
+    githubLink: z.string().url("Must be a valid URL").min(10, "GitHub Link must be at least 10 characters long"),
+    liveLink: z.string().url("Must be a valid URL").min(10, "Live Link must be at least 10 characters long"),
+    isPublic: z.boolean().default(true), // Checkbox validation
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      title: "",
+      description: "",
+      githubLink: "",
+      liveLink: "",
+      isPublic: true,
     },
   });
 
-  const onSubmit = () => {};
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      setUserId(session.user.id || null); // Adjust according to your session structure
+    }
+  }, [session, status]);
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    if (!userId) {
+      alert("User not logged in.");
+      return;
+    }
+
+    try {
+      await axios.post("/api/projects", { ...data, userId });
+      alert("Project created successfully!");
+    } catch (error) {
+      console.error("Error creating project:", error);
+      alert("Failed to create project.");
+    }
+  };
+
 
   return (
     <div className="max-w-xl mx-auto p-6 bg-[#0d1117] border border-gray-700 rounded-md shadow-lg">
@@ -145,7 +72,7 @@ const NewProject = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
-            name="username"
+            name="title"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-slate-200">Title</FormLabel>
@@ -162,7 +89,7 @@ const NewProject = () => {
           />
           <FormField
             control={form.control}
-            name="username"
+            name="description"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-slate-200">Description</FormLabel>
@@ -179,7 +106,7 @@ const NewProject = () => {
           />
           <FormField
             control={form.control}
-            name="username"
+            name="githubLink"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-slate-200">GitHub Link</FormLabel>
@@ -196,7 +123,7 @@ const NewProject = () => {
           />
           <FormField
             control={form.control}
-            name="username"
+            name="liveLink"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-slate-200">Live Link</FormLabel>
@@ -211,10 +138,18 @@ const NewProject = () => {
               </FormItem>
             )}
           />
-          <div className="flex items-center space-x-2">
-            <Checkbox />
-            <span className="text-sm text-slate-200">Make project private(only you can see it)</span>
-          </div>
+           <FormField
+            control={form.control}
+            name="isPublic"
+            render={({ field }) => (
+              <FormItem className="flex items-center space-x-2">
+                <FormControl>
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange}  className="bg-[#161b22] border border-gray-700 text-white mt-2" />
+                </FormControl>
+                <FormLabel className=" text-slate-200"> Make project public</FormLabel>
+              </FormItem>
+            )}
+          />
           <Button
             type="submit"
             className="w-full bg-green-600 text-white hover:bg-green-700"
