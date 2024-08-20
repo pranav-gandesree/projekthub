@@ -12,6 +12,7 @@ export async function GET(request: Request, { params }: { params: { username: st
       where: {
         name: username
       },
+      include: { projects: true }, 
     });
 
     if (!user) {

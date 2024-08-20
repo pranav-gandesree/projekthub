@@ -60,6 +60,7 @@ const NewProject = () => {
 
     try {
       await axios.post("/api/projects", { ...data, userId });
+      console.log({...data, userId})
        toast({
         title: "Hurrayyy",
         description: "Project created succesfullyyy!",   

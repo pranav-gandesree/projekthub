@@ -15,7 +15,7 @@ interface Project {
 
 interface User {
   name: string;
-  email: string;
+  email?: string;
   projects?: Project[];
 }
 
@@ -49,7 +49,7 @@ const UserProfile = ({ username }: { username: string }) => {
     <div>
          <h1>{user.name}'s Profile</h1>
          <p>Email: {user.email}</p>
-         
+
         <h2>Projects:</h2>
         {user.projects && user.projects.length > 0 ? (
         <ul>
@@ -59,7 +59,7 @@ const UserProfile = ({ username }: { username: string }) => {
               <p>{project.description}</p>
               <p><a href={project.githubLink} target="_blank" rel="noopener noreferrer">GitHub Link</a></p>
               <p><a href={project.liveLink} target="_blank" rel="noopener noreferrer">Live Link</a></p>
-              <p>{project.isPublic ? 'Public' : 'Private'}</p>
+              <p>{project.isPublic ? 'Private' : 'Public'}</p>
             </li>
           ))}
         </ul>

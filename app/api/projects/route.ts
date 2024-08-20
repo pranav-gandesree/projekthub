@@ -7,6 +7,8 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { title, description, githubLink, liveLink, isPublic, userId} = body;
 
+    console.log(title, description, githubLink, liveLink, isPublic, userId)
+
     const project = await prisma.project.create({
       data: {
         title,
