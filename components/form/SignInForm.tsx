@@ -56,7 +56,7 @@ const SignInForm = () => {
     } else {
       console.log("Sign-in successful, redirecting to admin...");
       router.refresh();
-      router.push("/admin");
+      router.push("/home");
     }
   };
 

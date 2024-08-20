@@ -13,7 +13,7 @@ const GoogleSignInButton: FC<GoogleSignInButtonProps> = ({children}) => {
     const loginWithGoogle = async () =>{
       try {
         setIsLoading(true)
-        signIn("google", {callbackUrl: 'http://localhost:3000/admin'})
+        signIn("google", {callbackUrl: 'http://localhost:3000/home'})
       } catch (error) {
         setIsLoading(false)
       }finally{

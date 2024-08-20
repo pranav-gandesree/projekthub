@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -19,10 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-slate-950 text-white`}>
         <Providers>
         <main className="h-screen flex flex-col justify-center items-center">
-          <Navbar/>
+          {/* <Navbar/> */}
          {children}
         </main>
         <Toaster/>
