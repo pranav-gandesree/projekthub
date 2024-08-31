@@ -1,10 +1,10 @@
+import UserProjects from "@/components/canvas/UserProjects";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
-const page = () => {
-  return (
-    <div>
-      your projectss
-    </div>
-  )
+export default async function projectsPage() {
+  const session = await getServerSession(authOptions);
+
+
+  return <UserProjects username={session?.user.name || ""} />;
 }
-
-export default page

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Home, Settings, BarChart, Eye, Clipboard, ClipboardList, Menu } from 'lucide-react';
+import { Home, Settings, BarChart, Eye, Clipboard, ClipboardList, Menu, CodeIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -32,8 +32,7 @@ export default function Sidebar() {
     <>
     
     <motion.div
-      className="fixed left-0 w-48 bg-gray-900 text-white shadow-lg m-4 border rounded-md"
-
+      className="fixed left-0 w-48 justify-center bg-gray-900 text-white shadow-lg m-4 border rounded-md"
       initial="hidden"
       animate=  'visible'
       variants={sidebarVariants}

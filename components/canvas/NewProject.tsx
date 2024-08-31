@@ -176,8 +176,24 @@
 
 
 
-"use client";
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"use client";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -187,7 +203,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -195,6 +210,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast"
+import axios from "axios";
 
 const formSchema = z.object({
   title: z.string().min(3, {
@@ -210,9 +227,15 @@ const formSchema = z.object({
     message: "Please enter a valid live project URL.",
   }),
   isPublic: z.boolean().default(false),
+  image: z.any().optional(),
 });
 
 export default function ProjectForm() {
+  const { data: session, status } = useSession();
+  const [userId, setUserId] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -221,111 +244,213 @@ export default function ProjectForm() {
       githubLink: "",
       liveLink: "",
       isPublic: false,
+      image: null,
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Replace this with your actual submit logic
-    console.log(values);
-  }
+  useEffect(() => {
+    if (status === "authenticated") {
+      setUserId(session.user.id || null); 
+    }
+  }, [session, status]);
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    if (!userId) {
+      alert("User not logged in.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('userId', userId);
+    formData.append('title', data.title);
+    formData.append('description', data.description);
+    formData.append('githubLink', data.githubLink);
+    formData.append('liveLink', data.liveLink);
+    formData.append('isPublic', data.isPublic.toString());
+    
+    if (data.image[0]) {
+      formData.append('image', data.image[0]);
+    }
+
+    try {
+      await axios.post("/api/projects", formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      console.log({...data, userId})
+       toast({
+        title: "Hurrayyy",
+        description: "Project created succesfullyyy!",   
+      });
+    } catch (error) {
+      console.error("Error creating project:", error);
+      toast({
+        title: "Error!",
+        description: "Oops!! Something is wrong",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImagePreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+        form.setValue('image', e.target.files);
+    } else {
+        // Clear the image preview if no file is selected
+        setImagePreview(null);
+        form.setValue('image', null); // Also clear the image from the form state
+    }
+};
+
 
   return (
-    <div className="max-w-lg mx-auto bg-white shadow-lg rounded-lg p-6 space-y-6 border border-gray-200">
-      <h2 className="text-2xl font-semibold text-gray-900">Submit Your Project</h2>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-gray-700">Project Title</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Give your project a catchy title."
-                    {...field}
-                    className="border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-gray-700">Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Describe your project here..."
-                    className="resize-none border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="githubLink"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-gray-700">GitHub Link</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="https://github.com/username/project"
-                    {...field}
-                    className="border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="liveLink"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-gray-700">Live Project Link</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="https://myproject.com"
-                    {...field}
-                    className="border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="isPublic"
-            render={({ field }) => (
-              <FormItem className="flex items-center space-x-3 rounded-lg border p-4 bg-gray-50 border-gray-300">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    className="text-blue-500"
-                  />
-                </FormControl>
-                <FormLabel className="text-gray-700">Make this project public</FormLabel>
-              </FormItem>
-            )}
-          />
-          <Button
-            type="submit"
-            className="w-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg"
-          >
-            Submit Project
-          </Button>
-        </form>
-      </Form>
+    <div className="max-w-4xl mx-auto justify-center bg-transparent shadow-lg rounded-lg p-6 flex space-x-6 border border-slate-200 ">
+      <div className="w-full">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel className="text-slate-200">Project Title</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Catchy title"
+                      {...field}
+                      className="border-gray-400 rounded-lg bg-transparent"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-slate-200">Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Describe your project here..."
+                      className="resize-none border-gray-400 rounded-lg bg-transparent"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex space-x-4">
+              <FormField
+                control={form.control}
+                name="liveLink"
+                render={({ field }) => (
+                  <FormItem className="w-1/2">
+                    <FormLabel className="text-slate-200">Live Project Link</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://myproject.com"
+                        {...field}
+                        className="border-gray-400 rounded-lg bg-transparent"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="githubLink"
+                render={({ field }) => (
+                  <FormItem className="w-1/2">
+                    <FormLabel className="text-slate-200">GitHub Link</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://github.com/username/project"
+                        {...field}
+                        className="rounded-lg bg-transparent"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="image"
+              render={() => (
+                <FormItem className="w-full">
+                  <FormLabel className="text-slate-200">Upload Project Image</FormLabel>
+                  <div className="flex flex-row gap-4">
+                  <FormControl>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="border-gray-400 rounded-lg bg-transparent"
+                      />
+                  </FormControl>
+                    {imagePreview && (
+                      <div className="">
+                        <img
+                          src={imagePreview}
+                          alt="Selected project image"
+                          className="w-10 h-10  rounded-lg"
+                          />
+                      </div>
+                    )}
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+                control={form.control}
+                name="isPublic"
+                render={({ field }) => (
+                  <FormItem className="w-1/2 flex items-center space-x-3 rounded-lg p-4 
+                  bg-transparent">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="bg-white mt-2"
+                      />
+                    </FormControl>
+                    <FormLabel className="text-slate-200">Make public</FormLabel>
+                  </FormItem>
+                )}
+              />
+
+            <Button
+              type="submit"
+              className=" bg-purple-400 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg"
+            >
+              Submit Project
+            </Button>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
