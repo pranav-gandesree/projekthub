@@ -9,7 +9,7 @@ const UserLogout = () => {
 
   return (
     <div>
-      <Button onClick={()=>signOut({
+      <Button className="text-purple-400" onClick={()=>signOut({
             redirect: true,
             callbackUrl: `${window.location.origin}/signin`
       })}>

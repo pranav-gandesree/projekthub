@@ -54,7 +54,7 @@ const UserProfile = ({ username }: { username: string }) => {
         {user.projects && user.projects.length > 0 ? (
         <ul>
           {user.projects.map((project) => (
-            <li key={project.id}>
+            <li key={project.id} className='border border-slate-300'>
               <h3>{project.title}</h3>
               <p>{project.description}</p>
               <p><a href={project.githubLink} target="_blank" rel="noopener noreferrer">GitHub Link</a></p>
