@@ -29,9 +29,17 @@ const UserProjects = ({ username }: { username: string }) => {
       const fetchUser = async () => {
         try {
           const response = await axios.get(`/api/users/${username}`);
-          setUser(response.data);
-          console.log(response.data)
-        } catch (error) {
+          const userData = response.data;
+  
+          // Map the `public` field to `isPublic`
+          const mappedProjects = userData.projects.map((project: any) => ({
+            ...project,
+            isPublic: project.public,
+          }));
+  
+          setUser({ ...userData, projects: mappedProjects });
+          console.log({ ...userData, projects: mappedProjects });
+        }  catch (error) {
           setError('Error fetching user');
         }
       };
@@ -60,7 +68,7 @@ const UserProjects = ({ username }: { username: string }) => {
         image={project?.image}
         githubLink={project.githubLink}
         liveLink={project.liveLink}
-        isPublic={!project.isPublic}
+        isPublic={project.isPublic}
       />
     ))
   ) : (

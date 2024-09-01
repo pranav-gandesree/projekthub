@@ -68,7 +68,7 @@ const SignUpForm = () => {
           name='username'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel className="text-slate-700">Username</FormLabel>
               <FormControl>
                 <Input placeholder="JohnDoe" {...field} />
               </FormControl>
@@ -81,7 +81,7 @@ const SignUpForm = () => {
           name='email'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-slate-700">Email</FormLabel>
               <FormControl>
                 <Input placeholder="Email" {...field} />
               </FormControl>
@@ -94,9 +94,10 @@ const SignUpForm = () => {
           name='password'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel className="text-slate-700">Password</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your password" type="password" {...field} />
+                <Input placeholder="Enter your password" type="password" {...field} 
+                className="text-slate-700" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -107,13 +108,13 @@ const SignUpForm = () => {
       </form>
 
 
-    <div className="mx-auto my-4 flex w-full items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-stone-400 after:ml-4 after:block after:h-px after:flex-grow after:bg-stone-400">
+    <div className="mx-auto my-4 flex w-full items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-stone-400 after:ml-4 after:block after:h-px after:flex-grow after:bg-stone-400 text-slate-700">
         or
     </div>
 
       <GoogleSignInButton>Sign Up with google </GoogleSignInButton>
 
-    <p className="mt-4">
+    <p className="mt-4 text-slate-700">
         Already have an account, please&nbsp;
         <Link className='text-blue-500 hover:underline' href='/signin'>Sign In</Link>
     </p>

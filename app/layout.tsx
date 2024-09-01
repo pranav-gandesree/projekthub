@@ -26,7 +26,7 @@ export default function RootLayout({
         </div>
         <div className="relative z-10">
           <Providers>
-            <main className="h-screen flex flex-col items-center justify-center">
+            <main className="h-screen flex flex-col items-center ">
               {/* <Navbar/> */}
               {children}
             </main>

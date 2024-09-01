@@ -165,6 +165,14 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      profile: (profile) => {
+        return {
+          id: profile.sub,
+          name: profile.name.trim().replace(/\s+/g, ''), // Remove spaces
+          email: profile.email,
+          // image: profile.picture,
+        };
+      },
     }),
   ],
   session: {
@@ -173,13 +181,15 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     jwt: async ({ user, token }) => {
       if (user) {
-        token.uid = user.id;  // Add the user ID to the token
+        token.uid = user.id;
+        token.email = user.email;   // Add the user ID to the token
       }
       return token;
     },
     session: async ({ session, token }: any) => {
       if (session.user) {
-        session.user.id = token.uid;  // Add the user ID to the session
+        session.user.id = token.uid; 
+        session.user.email = token.email; // Add the user ID to the session
       }
       return session;
     },

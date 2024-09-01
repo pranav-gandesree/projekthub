@@ -34,20 +34,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           href={githubLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:underline"
+          className="text-blue-600 hover:underline cursor-pointer"
         >
           GitHub Link
         </a>
-        {/* <a
+        <a
           href={liveLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:underline"
+          className="text-blue-600 hover:underline cursor-pointer"
         >
           Live Link
-        </a> */}
-        <ExternalLink size={16} />
-        <span>Live Demo</span>
+        </a>
       </div>
       <p className="mt-4 text-sm text-gray-500">
         {isPublic ? 'Public' : 'Private'}
