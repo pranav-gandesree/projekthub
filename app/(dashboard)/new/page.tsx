@@ -1,6 +1,15 @@
 import NewProject from "@/components/canvas/NewProject"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
+import { redirect } from "next/navigation";
 
-const page = () => {
+const page = async () => {
+  const session = await getServerSession(authOptions);
+
+  if(!session){
+    redirect('/home')
+  }
+
   return (
       <NewProject/>
   )

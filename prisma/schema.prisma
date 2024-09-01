@@ -7,30 +7,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// model User {
-//   id        Int      @id @default(autoincrement())
-//   email     String   @unique
-//   password  String
-//   name          String
-//   createdAt     DateTime  @default(now())
-//   projects  Project[] 
-// }
 
 model Project {
-  id        Int      @id @default(autoincrement())
-  title     String
+  id          Int      @id @default(autoincrement())
+  title       String
   description String
-  image     String?
-  liveLink  String
-  githubLink String
-  public    Boolean  @default(true)
-  createdBy User     @relation(fields: [userId], references: [id])
-  userId      String   // Changed this to String to match User's id field
+  image       String?
+  liveLink    String
+  githubLink  String
+  public      Boolean  @default(true)
+  createdBy   User     @relation(fields: [userId], references: [id])
+  userId      String
+  tags        Tag[]    @relation("ProjectTags")
 
   @@map("projects")
+  ProjectTags ProjectTags[]
 }
 
+model Tag {
+  id       Int       @id @default(autoincrement())
+  name     String     @unique
+  projects Project[] @relation("ProjectTags")
 
+  @@map("tags")
+  ProjectTags ProjectTags[]
+}
+
+// Implicit many-to-many join table
+model ProjectTags {
+  projectId Int
+  tagId     Int
+  project   Project @relation(fields: [projectId], references: [id])
+  tag       Tag     @relation(fields: [tagId], references: [id])
+
+  @@id([projectId, tagId])
+  @@map("_ProjectTags")
+}
 
 model Account {
   id                 String  @id @default(cuid())

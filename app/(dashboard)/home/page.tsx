@@ -1,21 +1,13 @@
-// import { authOptions } from "@/lib/auth";
-// import { getServerSession } from "next-auth";
-
-// const page = async () => {
-//   const session = await getServerSession(authOptions);
-//   console.log(session);
-//   if (session?.user) {
-//     return <h2>welcome back admin {session.user.name}</h2>;
-//   }
-//   return <h2>Please login to checkout this page</h2>;
-// };
-
-// export default page;
-
 'use client'
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+
+interface User {
+  id: number;
+  name: string;
+}
+
 
 interface Project {
   id: number;
@@ -25,6 +17,7 @@ interface Project {
   liveLink: string;
   image: string | null;
   isPublic: boolean;
+  createdBy: User; 
 }
 
 const HomePage = () => {
@@ -36,6 +29,7 @@ const HomePage = () => {
     const fetchProjects = async () => {
       try {
         const response = await axios.get('/api/projects');
+        console.log(response.data)
         setProjects(response.data);
       } catch (error) {
         setError('Failed to fetch public projects');
@@ -66,6 +60,7 @@ const HomePage = () => {
               )}
               <h3 className="text-xl font-semibold text-gray-800 mb-2">{project.title}</h3>
               <p className="text-gray-600 mb-4">{project.description}</p>
+              <p className="text-gray-500 mb-4">Posted by: {project.createdBy.name || 'Unknown'}</p>
               <div className="space-y-2">
                 <a
                   href={project.githubLink}

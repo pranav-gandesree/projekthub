@@ -1,31 +1,44 @@
 // app/api/projects/route.ts
 import { NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
+// Ensure the path is correct
 
 export async function POST(request: Request) {
+  const { title, description, image, liveLink, githubLink, public: isPublic, userId, tags } = await request.json();
+
   try {
-    const body = await request.json();
-    const { title, description, githubLink, liveLink, isPublic, userId} = body;
+    const createdTags = await Promise.all(
+      tags.map(async (tag: string) => {
+        return await prisma.tag.upsert({
+          where: { name: tag },
+          update: {},
+          create: { name: tag },
+        });
+      })
+    );
 
-    console.log(title, description, githubLink, liveLink, isPublic, userId)
-
-    const project = await prisma.project.create({
+    const newProject = await prisma.project.create({
       data: {
         title,
         description,
-        githubLink,
+        image,
         liveLink,
+        githubLink,
         public: isPublic,
-        userId, 
+        userId,
+        tags: {
+          connect: createdTags.map(tag => ({ id: tag.id })),
+        },
       },
     });
 
-    return NextResponse.json({ project });
+    return NextResponse.json(newProject);
   } catch (error) {
-    console.error('Error creating project:', error);
+    console.error("Error creating project:", error);
     return NextResponse.json({ error: 'Failed to create project' }, { status: 500 });
   }
 }
+
 
 
 
@@ -35,6 +48,10 @@ export async function GET() {
     const publicProjects = await prisma.project.findMany({
       where: {
         public: true, // Assuming `public` is the field name in your database
+      },
+      include: {
+        createdBy: true, // Include the user relation 
+        tags: true,
       },
     });
 
