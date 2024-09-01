@@ -11,6 +11,7 @@ interface Project {
   githubLink: string;
   liveLink: string;
   isPublic: boolean;
+  tags: string[];
 }
 
 interface User {

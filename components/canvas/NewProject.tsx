@@ -32,6 +32,7 @@ const NewProject = () => {
     githubLink: z.string().url("Must be a valid URL").min(10, "GitHub Link must be at least 10 characters long"),
     liveLink: z.string().url("Must be a valid URL").min(10, "Live Link must be at least 10 characters long"),
     isPublic: z.boolean().default(true), // Checkbox validation
+    tags: z.array(z.string().min(1)).nonempty("Must include at least one tag"),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -42,6 +43,7 @@ const NewProject = () => {
       githubLink: "",
       liveLink: "",
       isPublic: true,
+      tags: [],
     },
   });
 
@@ -153,6 +155,23 @@ const NewProject = () => {
                 )}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-slate-200">Tags</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter tags separated by commas"
+                      onChange={(e) => field.onChange(e.target.value.split(',').map(tag => tag.trim()))}
+                      className="border-gray-400 rounded-lg bg-transparent"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
                 control={form.control}

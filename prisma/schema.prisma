@@ -13,7 +13,7 @@ model Project {
   title       String
   description String
   image       String?
-  liveLink    String
+  liveLink    String  // make it not required later , when doing a prisma migration
   githubLink  String
   public      Boolean  @default(true)
   createdBy   User     @relation(fields: [userId], references: [id])
