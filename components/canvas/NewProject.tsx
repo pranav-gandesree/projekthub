@@ -19,12 +19,15 @@ import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { useSession } from 'next-auth/react';
 import { useToast } from "@/components/ui/use-toast"
+import { useRouter } from "next/navigation";
 
 const NewProject = () => {
 
   const { data: session, status } = useSession();
   const [userId, setUserId] = useState<string | null>(null);
+  const [username, setUsername] =  useState<string | null>(null);
   const { toast } = useToast()
+  const router = useRouter()
 
   const formSchema = z.object({
     title: z.string().min(2, "Title must be at least 2 characters long"),
@@ -51,31 +54,40 @@ const NewProject = () => {
   useEffect(() => {
     if (status === "authenticated") {
       setUserId(session.user.id || null); 
+      setUsername(session.user.name)
     }
   }, [session, status]);
+
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     if (!userId) {
       alert("User not logged in.");
       return;
     }
-
+  
     try {
-      await axios.post("/api/projects", { ...data, userId });
-      console.log({...data, userId})
-       toast({
+      await axios.post("/api/projects", { ...data, userId, username });
+
+      // const username = session?.user.name
+  
+      toast({
         title: "Hurrayyy",
-        description: "Project created succesfullyyy!",   
-      })
+        description: "Project created successfully!",
+      });
+  
+      // Redirect to /username/projects
+      router.push(`/${username}/projects`);
+  
     } catch (error) {
       console.error("Error creating project:", error);
       toast({
         title: "Error!",
-        description: "Oops!! Something is wrong",
+        description: "Oops!! Something went wrong",
         variant: "destructive"
-      })
+      });
     }
   };
+  
 
 
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import { useSession } from 'next-auth/react';
 
 interface Project {
   id: number;
@@ -23,12 +23,20 @@ interface User {
 const UserProfile = ({ username }: { username: string }) => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(`/api/users/${username}`);
         const userData = response.data;
+
+        console.log("API Response:", userData);
+
+          // Check if name and email exist in the API response
+          if (!userData.name || !userData.email) {
+            throw new Error("Name or email is missing in the API response");
+          }
 
         // Map the `public` field to `isPublic`
         const mappedProjects = userData.projects.map((project: any) => ({
@@ -56,8 +64,8 @@ const UserProfile = ({ username }: { username: string }) => {
 
   return (
     <div>
-         <h1>{user.name}'s Profile</h1>
-         <p>Email: {user.email}</p>
+         <h1>{user.email}</h1>
+         <p>Email: {user.name}</p>
 
         <h2>Projects:</h2>
         {user.projects && user.projects.length > 0 ? (
@@ -68,7 +76,7 @@ const UserProfile = ({ username }: { username: string }) => {
               <p>{project.description}</p>
               <p><a href={project.githubLink} target="_blank" rel="noopener noreferrer">GitHub Link</a></p>
               <p><a href={project.liveLink} target="_blank" rel="noopener noreferrer">Live Link</a></p>
-              <p>{project.isPublic ? 'Private' : 'Public'}</p>
+              <p>{project.isPublic ? 'Public' : 'Private'}</p>
             </li>
           ))}
         </ul>

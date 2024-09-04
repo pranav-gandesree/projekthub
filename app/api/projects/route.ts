@@ -1,10 +1,10 @@
 // app/api/projects/route.ts
 import { NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
-// Ensure the path is correct
+import redisClient from '@/lib/cache/redis-cache';
 
 export async function POST(request: Request) {
-  const { title, description, image, liveLink, githubLink, public: isPublic, userId, tags } = await request.json();
+  const { title, description, image, liveLink, githubLink, public: isPublic, userId, tags, username } = await request.json();
 
   try {
     const createdTags = await Promise.all(
@@ -32,6 +32,28 @@ export async function POST(request: Request) {
       },
     });
 
+
+      // Cache Update: User Projects
+      const userProjectsCacheKey = `user:${username}:projects`;
+      const cachedUserProjects = await redisClient.get(userProjectsCacheKey);
+      if (cachedUserProjects) {
+        const projects = JSON.parse(cachedUserProjects);
+        projects.push(newProject); // Add the new project to the cached list
+        await redisClient.setEx(userProjectsCacheKey, 3600, JSON.stringify(projects));
+        console.log(`Cache update successful for key: ${userProjectsCacheKey}`);
+      }
+  
+      // Cache Update: Public Projects (if the project is public)
+      if (isPublic) {
+        const publicProjectsCacheKey = `publicProjects`;
+        const cachedPublicProjects = await redisClient.get(publicProjectsCacheKey);
+        if (cachedPublicProjects) {
+          const publicProjects = JSON.parse(cachedPublicProjects);
+          publicProjects.push(newProject);
+          await redisClient.setEx(publicProjectsCacheKey, 3600, JSON.stringify(publicProjects));
+        }
+      }
+
     return NextResponse.json(newProject);
   } catch (error) {
     console.error("Error creating project:", error);
@@ -44,90 +66,37 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    // Fetch all public projects from the database
+    const cacheKey = 'publicProjects';
+
+    // Check if the public projects are in the cache
+    const cachedProjects = await redisClient.get(cacheKey);
+
+    if (cachedProjects) {
+      // If cached, return the data from Redis
+      return NextResponse.json(JSON.parse(cachedProjects));
+    }
+
+    // If not cached, fetch from the database
     const publicProjects = await prisma.project.findMany({
       where: {
         public: true, // Assuming `public` is the field name in your database
       },
       include: {
-        createdBy: true, // Include the user relation 
+        createdBy: true, // Include the user relation
         tags: true,
       },
     });
 
+    // Store the result in Redis with an expiration time (e.g., 1 hour)
+    await redisClient.set(cacheKey, JSON.stringify(publicProjects), {
+      EX: 3600, // Expire in 1 hour (3600 seconds)
+    });
+
+    // Return the data
     return NextResponse.json(publicProjects);
   } catch (error) {
-    console.error("Error fetching public projects:", error);
+    console.error('Error fetching public projects:', error);
     return NextResponse.json({ error: 'Failed to fetch public projects' }, { status: 500 });
   }
 }
 
-
-
-// // pages/api/projects.js
-// import type { NextApiRequest, NextApiResponse } from 'next';
-// import cloudinary from '@/lib/cloudinary'; 
-// import upload from '@/lib/uploadImage'; 
-// import prisma from '@/prisma/prisma';
-
-// export const config = {
-//   api: {
-//     bodyParser: false, // Disable default body parsing
-//   },
-// };
-
-// export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-//   if (req.method === 'POST') {
-//     upload.single('image')(req, res, async (err) => {
-//       if (err) return res.status(500).json({ error: 'File upload error' });
-
-//       const { title, description, githubLink, liveLink, isPublic, userId } = req.body;
-//       const imageFile = req.file;
-
-//       let imageUrl = '';
-//       if (imageFile) {
-//         try {
-//           const result = await cloudinary.uploader.upload_stream(
-//             { folder: 'projects' }, // Optional: specify a folder
-//             (error, result) => {
-//               if (error) {
-//                 console.error('Error uploading to Cloudinary:', error);
-//                 res.status(500).json({ error: 'Failed to upload image' });
-//                 return;
-//               }
-//               imageUrl = result.secure_url;
-//             }
-//           );
-
-//           imageFile.buffer.pipe(result); // Upload the image
-//         } catch (uploadError) {
-//           console.error('Error uploading image:', uploadError);
-//           res.status(500).json({ error: 'Failed to upload image' });
-//           return;
-//         }
-//       }
-
-//       try {
-//         const project = await prisma.project.create({
-//           data: {
-//             title: title as string,
-//             description: description as string,
-//             githubLink: githubLink as string,
-//             liveLink: liveLink as string,
-//             public: isPublic === 'true',
-//             userId: userId as string,
-//             image: imageUrl, // Store the image URL in the database
-//           },
-//         });
-
-//         res.status(200).json({ project });
-//       } catch (error) {
-//         console.error('Error creating project:', error);
-//         res.status(500).json({ error: 'Failed to create project' });
-//       }
-//     });
-//   } else {
-//     res.setHeader('Allow', ['POST']);
-//     res.status(405).end(`Method ${req.method} Not Allowed`);
-//   }
-// }
