@@ -31,26 +31,24 @@ export async function POST(request: Request) {
         },
       },
     });
+console.log(newProject)
 
-
-      // Cache Update: User Projects
+    //   // Cache Update: User Projects
       const userProjectsCacheKey = `user:${username}:projects`;
-      const cachedUserProjects = await redisClient.get(userProjectsCacheKey);
-      if (cachedUserProjects) {
-        const projects = JSON.parse(cachedUserProjects);
-        projects.push(newProject); // Add the new project to the cached list
-        await redisClient.setEx(userProjectsCacheKey, 3600, JSON.stringify(projects));
-        console.log(`Cache update successful for key: ${userProjectsCacheKey}`);
-      }
-  
+
+        // Cache the result in Redis
+    await redisClient.setEx(userProjectsCacheKey, 3600, JSON.stringify(newProject)); //cache for 1 hour
+    console.log('succesfully created a proj and added in redis', newProject); 
+
+
       // Cache Update: Public Projects (if the project is public)
       if (isPublic) {
         const publicProjectsCacheKey = `publicProjects`;
         const cachedPublicProjects = await redisClient.get(publicProjectsCacheKey);
         if (cachedPublicProjects) {
-          const publicProjects = JSON.parse(cachedPublicProjects);
-          publicProjects.push(newProject);
-          await redisClient.setEx(publicProjectsCacheKey, 3600, JSON.stringify(publicProjects));
+          // const publicProjects = JSON.parse(cachedPublicProjects);
+          // publicProjects.push(newProject);
+          await redisClient.setEx(publicProjectsCacheKey, 3600, JSON.stringify(newProject));
         }
       }
 
