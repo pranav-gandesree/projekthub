@@ -27,12 +27,12 @@ export default function Sidebar() {
     return <p>Loading...</p>;
   }
 
+  // Check if session is not null
   const isLoggedIn = session?.user !== undefined;
 
   return (
     <div className="relative">
       {/* ProjectHub Title */}
-
       <motion.div
         className="fixed top-0 left-0 flex items-center p-2 text-white shadow-lg rounded-md z-10 md:hidden"
         initial="hidden"
@@ -62,16 +62,16 @@ export default function Sidebar() {
               <Link href="/home" className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
                 <HomeIcon className="h-6 w-6 mr-2" /> Home
               </Link>
-              <Link href={`/${session.user.name}/projects`} className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
+              <Link href={`/${session?.user?.name}/projects`} className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
                 <FolderIcon className="h-6 w-6 mr-2" /> Your Projects
               </Link>
-              <Link href={`/${session.user.name}`} className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
+              <Link href={`/${session?.user?.name}`} className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
                 <UserIcon className="h-6 w-6 mr-2" /> Profile
               </Link>
               <Link href="/new" className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
                 <PlusCircleIcon className="h-6 w-6 mr-2" /> Create Project
               </Link>
-              <Link href={`/${session.user.name}/bookmarks`} className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
+              <Link href={`/${session?.user?.name}/bookmarks`} className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
                 <BookmarkIcon className="h-6 w-6 mr-2" /> Bookmarks
               </Link>
               <UserLogout className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
@@ -103,13 +103,21 @@ export default function Sidebar() {
           <HomeIcon className="h-6 w-6" />
           <span>Home</span>
         </Link>
+        <Link href={`/${session?.user?.name}/projects`} className="flex flex-col items-center text-purple-400">
+          <FolderIcon className="h-6 w-6" />
+          <span>Your Projects</span>
+        </Link>
+        <Link href={`/${session?.user?.name}`} className="flex flex-col items-center text-purple-400">
+          <UserIcon className="h-6 w-6" />
+          <span>Profile</span>
+        </Link>
         <Link href="/new" className="flex flex-col items-center text-purple-400">
           <PlusCircleIcon className="h-6 w-6" />
-          <span>Add</span>
+          <span>New</span>
         </Link>
-        <Link href="/memories" className="flex flex-col items-center text-purple-400">
+        <Link href="/bookmarks" className="flex flex-col items-center text-purple-400">
           <BookmarkIcon className="h-6 w-6" />
-          <span>Memories</span>
+          <span>Bookmarks</span>
         </Link>
       </motion.div>
     </div>
