@@ -1,0 +1,75 @@
+'use client'
+
+import { Button } from "@/components/ui/button"
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { motion } from 'framer-motion';
+import { useSession } from 'next-auth/react';
+import UserLogout from '../UserLogout';
+import Link from 'next/link';
+import { 
+  CodeIcon, 
+  HomeIcon, 
+  PlusCircleIcon, 
+  FolderIcon, 
+  BookmarkIcon, 
+  UserIcon, 
+  LogOutIcon 
+} from 'lucide-react';
+
+export function SheetDemo() {
+  const { data: session } = useSession(); // Using useSession hook for client-side
+
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline">Open</Button>
+      </SheetTrigger>
+      <SheetContent>
+       
+
+        <motion.div
+          className="fixed top-16 w-48 bg-gray-900 text-white shadow-lg m-4 border rounded-md hidden md:block"
+          initial="hidden"
+          animate="visible"
+          transition={{ type: 'spring', stiffness: 120 }}
+        >
+          <nav className="mt-2">
+            <Link href="/home" className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
+              <HomeIcon className="h-6 w-6 mr-2" /> Home
+            </Link>
+            <Link href={`/${session?.user?.name}/projects`} className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
+              <FolderIcon className="h-6 w-6 mr-2" /> Your Projects
+            </Link>
+            <Link href={`/${session?.user?.name}`} className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
+              <UserIcon className="h-6 w-6 mr-2" /> Profile
+            </Link>
+            <Link href="/new" className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
+              <PlusCircleIcon className="h-6 w-6 mr-2" /> Create Project
+            </Link>
+            <Link href={`/${session?.user?.name}/bookmarks`} className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
+              <BookmarkIcon className="h-6 w-6 mr-2" /> Bookmarks
+            </Link>
+            <UserLogout className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
+              <LogOutIcon className="h-6 w-6 mr-2" /> Logout
+            </UserLogout>
+          </nav>
+        </motion.div>
+
+        {/* <SheetFooter>
+          <SheetClose asChild>
+            <Button type="submit">Save changes</Button>
+          </SheetClose>
+        </SheetFooter> */}
+      </SheetContent>
+    </Sheet>
+  )
+}
