@@ -62,39 +62,94 @@ console.log(newProject)
 
 
 
+// export async function GET() {
+//   try {
+//     const cacheKey = 'publicProjects';
+
+//     // Check if the public projects are in the cache
+//     const cachedProjects = await redisClient.get(cacheKey);
+
+//     if (cachedProjects) {
+//       // If cached, return the data from Redis
+//       return NextResponse.json(JSON.parse(cachedProjects));
+//     }
+
+//     // If not cached, fetch from the database
+//     const publicProjects = await prisma.project.findMany({
+//       where: {
+//         public: true, // Assuming `public` is the field name in your database
+//       },
+//       include: {
+//         createdBy: true, // Include the user relation
+//         tags: true,
+//       },
+//     });
+
+//     // Store the result in Redis with an expiration time (e.g., 1 hour)
+//     await redisClient.set(cacheKey, JSON.stringify(publicProjects), {
+//       EX: 3600, // Expire in 1 hour (3600 seconds)
+//     });
+
+//     // Return the data
+//     return NextResponse.json(publicProjects);
+//   } catch (error) {
+//     console.error('Error fetching public projects:', error);
+//     return NextResponse.json({ error: 'Failed to fetch public projects' }, { status: 500 });
+//   }
+// }
+
+
+
+
+
 export async function GET() {
   try {
     const cacheKey = 'publicProjects';
 
-    // Check if the public projects are in the cache
-    const cachedProjects = await redisClient.get(cacheKey);
+    let publicProjects = null;
 
-    if (cachedProjects) {
-      // If cached, return the data from Redis
-      return NextResponse.json(JSON.parse(cachedProjects));
+    // Try to get cached projects from Redis
+    try {
+      const cachedProjects = await redisClient.get(cacheKey);
+      if (cachedProjects) {
+        // If cached, return the data from Redis
+        return NextResponse.json(JSON.parse(cachedProjects));
+      }
+    } catch (redisError) {
+      console.error('Redis fetch error:', redisError);
+      // Continue to fetch from the database if Redis fails
     }
 
-    // If not cached, fetch from the database
-    const publicProjects = await prisma.project.findMany({
-      where: {
-        public: true, // Assuming `public` is the field name in your database
-      },
-      include: {
-        createdBy: true, // Include the user relation
-        tags: true,
-      },
-    });
+    // If not cached or Redis failed, fetch from the database
+    try {
+      publicProjects = await prisma.project.findMany({
+        where: {
+          public: true, // Assuming `public` is the field name in your database
+        },
+        include: {
+          createdBy: true, // Include the user relation
+          tags: true,
+        },
+      });
 
-    // Store the result in Redis with an expiration time (e.g., 1 hour)
-    await redisClient.set(cacheKey, JSON.stringify(publicProjects), {
-      EX: 3600, // Expire in 1 hour (3600 seconds)
-    });
+      // Store the result in Redis with an expiration time (e.g., 1 hour)
+      try {
+        await redisClient.set(cacheKey, JSON.stringify(publicProjects), {
+          EX: 3600, // Expire in 1 hour (3600 seconds)
+        });
+      } catch (redisSetError) {
+        console.error('Redis set error:', redisSetError);
+        // If Redis set fails, log the error but don't break the response
+      }
 
-    // Return the data
-    return NextResponse.json(publicProjects);
+      // Return the data from the database
+      return NextResponse.json(publicProjects);
+    } catch (dbError) {
+      console.error('Database fetch error:', dbError);
+      return NextResponse.json({ error: 'Failed to fetch public projects from the database' }, { status: 500 });
+    }
   } catch (error) {
-    console.error('Error fetching public projects:', error);
+    console.error('Unexpected error:', error);
     return NextResponse.json({ error: 'Failed to fetch public projects' }, { status: 500 });
   }
 }
-

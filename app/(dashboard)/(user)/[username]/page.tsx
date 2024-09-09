@@ -5,9 +5,9 @@ import UserProfile from '@/components/canvas/UserProfile'
 export default function UserPage({ params }: { params: { username: string } }) {
   return (
     <div>
-       <div className="flex-1 p-6">
+       {/* <div className="flex-1 p-6">
         <MarkdownEditor />
-      </div>
+      </div> */}
       <UserProfile username={params.username} />
     </div>
   )
