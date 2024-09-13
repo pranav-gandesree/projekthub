@@ -34,7 +34,7 @@ export function SheetDemo() {
       <SheetTrigger asChild>
         {/* <Button variant="outline">Open</Button> */}
         <Button className="text-purple-500">
-          <MenuIcon className="w-6 h-6" />
+          <MenuIcon className="w-8 h-8" />
         </Button>
       </SheetTrigger>
       <SheetContent>

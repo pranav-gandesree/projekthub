@@ -1,11 +1,7 @@
+import UserBookmarks from "@/components/canvas/UserBookmarks";
 
 
-const page = () => {
-  return (
-    <div>
-       users bookmarks
-    </div>
-  )
+export default function BookmarksPage({ params }: { params: { username: string } }) {
+return <UserBookmarks username={params.username} />;
 }
 
-export default page

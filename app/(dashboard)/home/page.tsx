@@ -2,12 +2,12 @@
 
 // import React, { useEffect, useState } from 'react'
 // import { motion } from 'framer-motion'
-// import { BookmarkIcon, ExternalLinkIcon, GithubIcon, ClockIcon } from 'lucide-react'
-// import { Button } from "@/components/ui/button"
-// import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-// import { Skeleton } from "@/components/ui/skeleton"
-// import { formatDistanceToNow } from 'date-fns'
+// import { BookmarkIcon, ExternalLinkIcon, GithubIcon } from 'lucide-react'
+// import { Button } from '@/components/ui/button'
+// import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+// import { Skeleton } from '@/components/ui/skeleton'
 // import Link from 'next/link'
+// import { useSession } from 'next-auth/react'
 
 // interface User {
 //   id: number
@@ -31,6 +31,7 @@
 //   const [loading, setLoading] = useState<boolean>(true)
 //   const [error, setError] = useState<string | null>(null)
 //   const [bookmarks, setBookmarks] = useState<Set<number>>(new Set())
+//   const { data: session } = useSession();
 
 //   useEffect(() => {
 //     const fetchProjects = async () => {
@@ -47,20 +48,63 @@
 //         setLoading(false)
 //       }
 //     }
-
-//     fetchProjects()
-//   }, [])
-
-//   const toggleBookmark = (projectId: number) => {
-//     setBookmarks(prev => {
-//       const newBookmarks = new Set(prev)
-//       if (newBookmarks.has(projectId)) {
-//         newBookmarks.delete(projectId)
-//       } else {
-//         newBookmarks.add(projectId)
+  
+//     const fetchBookmarks = async () => {
+//       if (session?.user.id) {
+//         try {
+//           const response = await fetch(`/api/users/${session.user.id}/bookmarks`)
+//           if (!response.ok) {
+//             throw new Error('Failed to fetch bookmarks')
+//           }
+//           const data = await response.json()
+//           setBookmarks(new Set(data.bookmarks))
+//           localStorage.setItem('bookmarks', JSON.stringify(data.bookmarks))
+//         } catch (error) {
+//           console.error('Failed to fetch bookmarks', error)
+//         }
 //       }
-//       return newBookmarks
-//     })
+//     }
+  
+//     fetchProjects()
+//     fetchBookmarks()
+//   }, [session])
+  
+
+
+//   const handleBookmark = async (projectId: number, action: 'add' | 'remove') => {
+//     try {
+//       const userId = session?.user.id;
+//       const response = await fetch(`/api/users/${session?.user.name}/bookmarks/${action}`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//           userId,
+//           projectId,
+//         }),
+//       });
+
+//       if (!response.ok) {
+//         throw new Error('Failed to update bookmark');
+//       }
+
+//       setBookmarks(prev => {
+//         const newBookmarks = new Set(prev);
+//         if (action === 'add') {
+//           newBookmarks.add(projectId);
+//         } else {
+//           newBookmarks.delete(projectId);
+//         }
+
+//         // Update localStorage after adding/removing bookmark
+//         localStorage.setItem('bookmarks', JSON.stringify(Array.from(newBookmarks)));
+
+//         return newBookmarks;
+//       });
+//     } catch (error) {
+//       console.error('Error handling bookmark:', error);
+//     }
 //   }
 
 //   if (loading) {
@@ -96,7 +140,7 @@
 //   return (
 //     <div className="container mx-auto px-4 py-8">
 //       <h2 className="text-3xl font-bold mb-8 text-center">Public Projects</h2>
-//       <motion.div 
+//       <motion.div
 //         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
 //         initial={{ opacity: 0, y: 20 }}
 //         animate={{ opacity: 1, y: 0 }}
@@ -113,15 +157,10 @@
 //               <Card className="overflow-hidden h-full flex flex-col">
 //                 <CardHeader className="">
 //                   <div className="flex justify-between items-start">
-//                       <p className="text-md text-gray-500 mt-1">
-//                         <Link href={project.createdBy.name} className="font-medium hover:underline hover:text-purple-500 text-purple-500">{project.createdBy.name}</Link> created a project
-//                       </p>
-//                       {/* <p className="text-xs text-gray-400 flex items-center mt-1">
-//                         <ClockIcon className="h-3 w-3 mr-1" />
-//                         {formatDistanceToNow(new Date(project.createdAt), { addSuffix: true })}
-//                       </p> */}
+//                     <p className="text-md text-gray-500 mt-1">
+//                       <Link href={project.createdBy.name} className="font-medium hover:underline hover:text-purple-500 text-purple-500">{project.createdBy.name}</Link> created a project
+//                     </p>
 //                   </div>
-
 //                 </CardHeader>
 //                 <CardContent className="flex-grow">
 //                   {project.image && (
@@ -136,19 +175,18 @@
 
 //                   <div className='flex flex-row justify-between'>
 //                     <CardTitle className="text-2xl mt-1 font-semibold text-slate-100">{project.title}</CardTitle>
-//               <Button
+//                     <Button
 //                       variant="ghost"
 //                       size="icon"
-//                       onClick={() => toggleBookmark(project.id)}
+//                       onClick={() => handleBookmark(project.id, bookmarks.has(project.id) ? 'remove' : 'add')}
 //                       aria-label={bookmarks.has(project.id) ? "Remove bookmark" : "Add bookmark"}
 //                     >
 //                       <BookmarkIcon className={`h-5 w-5 ${bookmarks.has(project.id) ? 'text-purple-500 fill-purple-500' : 'text-gray-500'}`} />
 //                     </Button>
-
 //                   </div>
 //                   <p className="text-gray-600 mb-4">{project.description}</p>
 //                 </CardContent>
-//                 <CardFooter className="flex justify-start gap-6">
+//                 <CardFooter className="flex justify-start gap-4">
 //                   <Button variant="outline" asChild className='hover:bg-purple-400'>
 //                     <a href={project.githubLink} target="_blank" rel="noopener noreferrer">
 //                       <GithubIcon className="mr-2 h-4 w-4" />
@@ -174,11 +212,6 @@
 //     </div>
 //   )
 // }
-
-
-
-
-
 
 
 
@@ -225,7 +258,7 @@ export default function ProjectGallery() {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [bookmarks, setBookmarks] = useState<Set<number>>(new Set())
-  const {data: session} = useSession();
+  const { data: session } = useSession();
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -243,17 +276,30 @@ export default function ProjectGallery() {
       }
     }
 
-    fetchProjects()
-  }, [])
+    const fetchBookmarks = async () => {
+      if (session?.user.id) {
+        try {
+          const response = await fetch(`/api/users/${session.user.id}/bookmarks`)
+          if (!response.ok) {
+            throw new Error('Failed to fetch bookmarks')
+          }
+          const data = await response.json()
+          setBookmarks(new Set(data.bookmarks))
+          localStorage.setItem('bookmarks', JSON.stringify(data.bookmarks))
+        } catch (error) {
+          console.error('Failed to fetch bookmarks', error)
+        }
+      }
+    }
 
-  function getUserId(){
-      return session?.user.id
-  }
+    fetchProjects()
+    fetchBookmarks()
+  }, [session])
 
   const handleBookmark = async (projectId: number, action: 'add' | 'remove') => {
     try {
-      const userId = getUserId() 
-      const response = await fetch(`/api/bookmarks/${action}`, {
+      const userId = session?.user.id;
+      const response = await fetch(`/api/users/${userId}/bookmarks/${action}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -262,23 +308,27 @@ export default function ProjectGallery() {
           userId,
           projectId,
         }),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to update bookmark')
+        throw new Error('Failed to update bookmark');
       }
 
       setBookmarks(prev => {
-        const newBookmarks = new Set(prev)
+        const newBookmarks = new Set(prev);
         if (action === 'add') {
-          newBookmarks.add(projectId)
+          newBookmarks.add(projectId);
         } else {
-          newBookmarks.delete(projectId)
+          newBookmarks.delete(projectId);
         }
-        return newBookmarks
-      })
+
+        // Update localStorage after adding/removing bookmark
+        localStorage.setItem('bookmarks', JSON.stringify(Array.from(newBookmarks)));
+
+        return newBookmarks;
+      });
     } catch (error) {
-      console.error('Error handling bookmark:', error)
+      console.error('Error handling bookmark:', error);
     }
   }
 
@@ -315,7 +365,7 @@ export default function ProjectGallery() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-3xl font-bold mb-8 text-center">Public Projects</h2>
-      <motion.div 
+      <motion.div
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -330,11 +380,11 @@ export default function ProjectGallery() {
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               <Card className="overflow-hidden h-full flex flex-col">
-                <CardHeader className="">
+                <CardHeader>
                   <div className="flex justify-between items-start">
-                      <p className="text-md text-gray-500 mt-1">
-                        <Link href={project.createdBy.name} className="font-medium hover:underline hover:text-purple-500 text-purple-500">{project.createdBy.name}</Link> created a project
-                      </p>
+                    <p className="text-md text-gray-500 mt-1">
+                      <Link href={project.createdBy.name} className="font-medium hover:underline hover:text-purple-500 text-purple-500">{project.createdBy.name}</Link> created a project
+                    </p>
                   </div>
                 </CardHeader>
                 <CardContent className="flex-grow">
@@ -356,7 +406,7 @@ export default function ProjectGallery() {
                       onClick={() => handleBookmark(project.id, bookmarks.has(project.id) ? 'remove' : 'add')}
                       aria-label={bookmarks.has(project.id) ? "Remove bookmark" : "Add bookmark"}
                     >
-                      <BookmarkIcon className={`h-5 w-5 ${bookmarks.has(project.id) ? 'text-purple-500 fill-purple-500' : 'text-gray-500'}`} />
+                      <BookmarkIcon className={`h-5 w-5 ${bookmarks.has(project.id) ? 'text-violet-500 fill-violet-500' : 'text-gray-500'}`} />
                     </Button>
                   </div>
                   <p className="text-gray-600 mb-4">{project.description}</p>
