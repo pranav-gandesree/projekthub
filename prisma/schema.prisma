@@ -8,40 +8,58 @@ datasource db {
 }
 
 
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?   @unique
+  password      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  projects      Project[] @relation("UserProjects")
+  bookmarks     Project[] @relation("UserBookmarks")
+
+  @@map("users")
+  UserProjectBookmarks UserProjectBookmarks[]
+}
+
 model Project {
   id          Int      @id @default(autoincrement())
   title       String
   description String
   image       String?
-  liveLink    String  // make it not required later , when doing a prisma migration
+  liveLink    String?
   githubLink  String
   public      Boolean  @default(true)
-  createdBy   User     @relation(fields: [userId], references: [id])
+  createdBy   User     @relation("UserProjects", fields: [userId], references: [id])
   userId      String
   tags        Tag[]    @relation("ProjectTags")
+  bookmarkedBy User[]  @relation("UserBookmarks")
 
   @@map("projects")
-  ProjectTags ProjectTags[]
+  UserProjectBookmarks UserProjectBookmarks[]
 }
 
 model Tag {
   id       Int       @id @default(autoincrement())
-  name     String     @unique
+  name     String    @unique
   projects Project[] @relation("ProjectTags")
 
   @@map("tags")
-  ProjectTags ProjectTags[]
 }
 
-// Implicit many-to-many join table
-model ProjectTags {
+model UserProjectBookmarks {
+  userId    String
   projectId Int
-  tagId     Int
-  project   Project @relation(fields: [projectId], references: [id])
-  tag       Tag     @relation(fields: [tagId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  project   Project  @relation(fields: [projectId], references: [id])
 
-  @@id([projectId, tagId])
-  @@map("_ProjectTags")
+  @@id([userId, projectId])
+  @@map("user_project_bookmarks")
 }
 
 model Account {
@@ -57,44 +75,28 @@ model Account {
   scope              String?
   id_token           String? @db.Text
   session_state      String?
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@unique([provider, providerAccountId])
   @@map("accounts")
 }
- 
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique @map("session_token")
   userId       String   @map("user_id")
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@map("sessions")
 }
- 
-model User {
-  id            String    @id @default(cuid())
-  name          String?   @unique
-  password      String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  projects      Project[] 
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
- 
-  @@map("users")
-}
- 
+
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@unique([identifier, token])
   @@map("verificationtokens")
 }

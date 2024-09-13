@@ -2,6 +2,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';
 import redisClient from '@/lib/cache/redis-cache';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
 
 export async function POST(request: Request) {
   const { title, description, image, liveLink, githubLink, public: isPublic, userId, tags, username } = await request.json();
@@ -151,5 +153,54 @@ export async function GET() {
   } catch (error) {
     console.error('Unexpected error:', error);
     return NextResponse.json({ error: 'Failed to fetch public projects' }, { status: 500 });
+  }
+}
+
+
+
+
+
+
+export async function DELETE(req: Request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+  }
+
+  const { projectId } = await req.json(); // Assuming you're passing `projectId` in the body
+
+  if (!projectId) {
+    return NextResponse.json({ error: 'Project ID is required' }, { status: 400 });
+  }
+
+  try {
+    // Fetch project to check if the logged-in user is the owner
+    const project = await prisma.project.findUnique({
+      where: { id: Number(projectId) },
+    });
+
+    if (!project || project.userId !== session.user.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    // Delete the project
+    await prisma.project.delete({
+      where: { id: Number(projectId) },
+    });
+
+    // Remove the project from Redis cache (user projects and public projects)
+    const userProjectsCacheKey = `user:${session.user.name}:projects`;
+    const publicProjectsCacheKey = `publicProjects`;
+
+    // Optionally update the cached user and public projects here by removing the deleted project
+
+    await redisClient.del(userProjectsCacheKey); // Invalidate the cache for user projects
+    await redisClient.del(publicProjectsCacheKey); // Invalidate the public projects cache (if applicable)
+
+    return NextResponse.json({ message: 'Project deleted successfully' }, { status: 200 });
+  } catch (error) {
+    console.error('Error deleting project:', error);
+    return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 });
   }
 }

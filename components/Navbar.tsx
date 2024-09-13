@@ -5,11 +5,12 @@ import { CodeIcon } from "lucide-react";
 import Link from "next/link";
 import Logo from "@/public/logo.svg"
 import { SheetDemo } from "./canvas/SheetDemo";
+import { MenuIcon } from "lucide-react";
 
 const Navbar = async () => {
   const session = await getServerSession(authOptions);
   return (
-    <div className=" py-2 flex flex-row justify-between w-full z-10 top-4 right-0 shadow-lg">
+    <div className=" py-2 flex flex-row justify-between w-full z-10 top-4 right-0 text-black shadow-lg">
       <Link href='/home'>
       <div className="flex flex-row ml-4 mt-2">
           <CodeIcon className="h-9 w-9 text-purple-400"/> 

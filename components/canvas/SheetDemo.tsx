@@ -22,7 +22,8 @@ import {
   FolderIcon, 
   BookmarkIcon, 
   UserIcon, 
-  LogOutIcon 
+  LogOutIcon, 
+  MenuIcon
 } from 'lucide-react';
 
 export function SheetDemo() {
@@ -31,7 +32,10 @@ export function SheetDemo() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline">Open</Button>
+        {/* <Button variant="outline">Open</Button> */}
+        <Button className="text-purple-500">
+          <MenuIcon className="w-6 h-6" />
+        </Button>
       </SheetTrigger>
       <SheetContent>
        
