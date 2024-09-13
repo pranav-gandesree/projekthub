@@ -43,6 +43,9 @@ export default async function LandingPage() {
           <Link href="/signin">
             <Button variant="secondary">Sign In</Button>
           </Link>
+          <Link href="/home">
+            <Button variant="secondary">Home</Button>
+          </Link>
         </nav>
       </header>
 
