@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 import { Sheet, SheetTrigger, SheetContent, SheetHeader } from '@/components/ui/sheet';
 import { Menu, Home, LogOut, User, FilePlus, FileText, Bookmark, Briefcase } from 'lucide-react'; // Icons for new menu items
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { useSession } from 'next-auth/react';
 
 

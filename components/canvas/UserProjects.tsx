@@ -6,7 +6,6 @@ import ProjectCard from './ProjectCard'; // Adjust the path as necessary
 import { useSession } from 'next-auth/react';
 import {
   AlertDialog,
-  AlertDialogTrigger,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,

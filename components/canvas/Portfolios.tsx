@@ -2,12 +2,11 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Github, Globe, Sparkles } from 'lucide-react'
+import { Github, Sparkles } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useSession } from 'next-auth/react'
-import Link from 'next/link'
 import { SiTypescript, SiVisualstudiocode, SiGithub, SiSolana } from 'react-icons/si';
 import DisplayPortfolios from "./DisplayPortfolios"
 
