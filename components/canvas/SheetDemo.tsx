@@ -41,7 +41,7 @@ export function SheetDemo() {
        
 
         <motion.div
-          className="fixed top-16 w-48 bg-gray-900 text-white shadow-lg m-4 border rounded-md hidden md:block"
+          className="fixed top-12 w-64 bg-gray-900 text-white shadow-lg m-4 border rounded-md hidden md:block"
           initial="hidden"
           animate="visible"
           transition={{ type: 'spring', stiffness: 120 }}
@@ -62,17 +62,27 @@ export function SheetDemo() {
             <Link href={`/${session?.user?.name}/bookmarks`} className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
               <BookmarkIcon className="h-6 w-6 mr-2" /> Bookmarks
             </Link>
+            <Link href={`/portfolios`} className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
+              <BookmarkIcon className="h-6 w-6 mr-2" /> Portfolios
+            </Link>
             <UserLogout className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
               <LogOutIcon className="h-6 w-6 mr-2" /> Logout
             </UserLogout>
           </nav>
         </motion.div>
 
-        {/* <SheetFooter>
-          <SheetClose asChild>
-            <Button type="submit">Save changes</Button>
-          </SheetClose>
-        </SheetFooter> */}
+        {/* <motion.div
+          className="fixed bottom-2 w-64 bg-gray-900 text-white shadow-lg m-4 border rounded-md hidden md:block"
+          initial="hidden"
+          animate="visible"
+          transition={{ type: 'spring', stiffness: 120 }}
+        >
+          <div className="p-2">
+            <p>{session?.user.name}</p>
+              
+           <p> {session?.user.email}</p>
+          </div>
+        </motion.div> */}
       </SheetContent>
     </Sheet>
   )

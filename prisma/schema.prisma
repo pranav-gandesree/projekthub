@@ -25,6 +25,7 @@ model User {
 
   @@map("users")
   UserProjectBookmarks UserProjectBookmarks[]
+  Portfolios Portfolios[]
 }
 
 model Project {
@@ -60,6 +61,16 @@ model UserProjectBookmarks {
 
   @@id([userId, projectId])
   @@map("user_project_bookmarks")
+}
+
+model Portfolios {
+  id Int @id @default(autoincrement())
+  githubLink String
+  portfolioLink String
+  uploadedBy User? @relation(fields: [userId], references: [id])
+  userId String?
+  
+  @@map("portfolios")
 }
 
 model Account {

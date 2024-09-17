@@ -32,11 +32,18 @@ const Navbar = async () => {
             )}
           </>
         ) : (
+          <>
           <Link href="/api/auth/signin">
             <Button variant="outline" className="text-black border-white">
               Sign In
             </Button>
           </Link>
+          <Link href="/portfolios">
+            <Button variant="outline" className="text-black border-white">
+              Portfolios
+            </Button>
+            </Link>
+          </>
         )}
       </div>
 
