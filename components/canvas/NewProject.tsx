@@ -1,4 +1,3 @@
-
 // "use client";
 // import { useEffect, useState } from "react";
 // import {
@@ -22,20 +21,17 @@
 // import { useRouter } from "next/navigation";
 
 // const NewProject = () => {
-
 //   const { data: session, status } = useSession();
-//   const [userId, setUserId] = useState<string | null>(null);
-//   const [username, setUsername] =  useState<string | null>(null);
-//   const { toast } = useToast()
-//   const router = useRouter()
+//   const { toast } = useToast();
+//   const router = useRouter();
 
 //   const formSchema = z.object({
 //     title: z.string().min(2, "Title must be at least 2 characters long"),
 //     description: z.string().min(10, "Description must be at least 10 characters long"),
 //     githubLink: z.string().url("Must be a valid URL").min(10, "GitHub Link must be at least 10 characters long"),
 //     liveLink: z.string().url("Must be a valid URL").min(10, "Live Link must be at least 10 characters long"),
-//     isPublic: z.boolean().default(true), // Checkbox validation
-//     tags: z.array(z.string().min(1)).nonempty("Must include at least one tag"),
+//     isPublic: z.boolean().default(true),
+//     tags: z.string().min(1, "Must include at least one tag"), // Handle splitting later
 //   });
 
 //   const form = useForm<z.infer<typeof formSchema>>({
@@ -46,51 +42,37 @@
 //       githubLink: "",
 //       liveLink: "",
 //       isPublic: true,
-//       tags: [],
+//       tags: "",
 //     },
 //   });
 
-
-//   useEffect(() => {
-//     if (status === "authenticated") {
-//       setUserId(session.user.id || null); 
-//       setUsername(session.user.name)
-//     }
-//   }, [session, status]);
-
-
-
 //   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-//     if (!userId) {
+//     const userId = session?.user?.id;
+//     const username = session?.user?.name;
+
+//     if (!userId || !username) {
 //       alert("User not logged in.");
 //       return;
 //     }
 
-//     try {
-//       await axios.post("/api/projects", { ...data, userId, username });
+//     const tagsArray = data.tags.split(",").map(tag => tag.trim());
 
-//       // const username = session?.user.name
-  
+//     try {
+//       await axios.post("/api/projects", { ...data, userId, username, tags: tagsArray });
 //       toast({
 //         title: "Hurrayyy",
 //         description: "Project created successfully!",
 //       });
-  
-//       // Redirect to /username/projects
 //       router.push(`/${username}/projects`);
-  
 //     } catch (error) {
 //       console.error("Error creating project:", error);
 //       toast({
 //         title: "Error!",
 //         description: "Oops!! Something went wrong",
-//         variant: "destructive"
+//         variant: "destructive",
 //       });
 //     }
 //   };
-  
-
-
 
 //   return (
 //     <div className="max-w-4xl mx-auto justify-center bg-transparent shadow-lg rounded-lg p-6 flex space-x-6 border border-slate-200 ">
@@ -132,6 +114,7 @@
 //                 </FormItem>
 //               )}
 //             />
+            
 //             <div className="flex space-x-4">
 //               <FormField
 //                 control={form.control}
@@ -150,7 +133,7 @@
 //                   </FormItem>
 //                 )}
 //               />
-//                <FormField
+//               <FormField
 //                 control={form.control}
 //                 name="githubLink"
 //                 render={({ field }) => (
@@ -168,6 +151,7 @@
 //                 )}
 //               />
 //             </div>
+
 //             <FormField
 //               control={form.control}
 //               name="tags"
@@ -177,7 +161,7 @@
 //                   <FormControl>
 //                     <Input
 //                       placeholder="Enter tags separated by commas"
-//                       onChange={(e) => field.onChange(e.target.value.split(',').map(tag => tag.trim()))}
+//                       {...field}
 //                       className="border-gray-400 rounded-lg bg-transparent"
 //                     />
 //                   </FormControl>
@@ -187,22 +171,21 @@
 //             />
 
 //             <FormField
-//                 control={form.control}
-//                 name="isPublic"
-//                 render={({ field }) => (
-//                   <FormItem className="w-1/2 flex items-center space-x-3 rounded-lg p-4 
-//                   bg-transparent">
-//                     <FormControl>
-//                       <Checkbox
-//                         checked={field.value}
-//                         onCheckedChange={field.onChange}
-//                         className="bg-white mt-2"
-//                       />
-//                     </FormControl>
-//                     <FormLabel className="text-slate-200">Make public</FormLabel>
-//                   </FormItem>
-//                 )}
-//               />
+//               control={form.control}
+//               name="isPublic"
+//               render={({ field }) => (
+//                 <FormItem className="w-1/2 flex items-center space-x-3 rounded-lg p-4 bg-transparent">
+//                   <FormControl>
+//                     <Checkbox
+//                       checked={field.value}
+//                       onCheckedChange={field.onChange}
+//                       className="bg-white mt-2"
+//                     />
+//                   </FormControl>
+//                   <FormLabel className="text-slate-200">Make public</FormLabel>
+//                 </FormItem>
+//               )}
+//             />
 
 //             <Button
 //               type="submit"
@@ -234,8 +217,17 @@
 
 
 
-"use client";
-import { useEffect, useState } from "react";
+
+
+
+
+
+
+
+
+'use client'
+
+import { useEffect, useState } from "react"
 import {
   Form,
   FormControl,
@@ -243,23 +235,28 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { Button } from "../ui/button";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Checkbox } from "../ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
-import axios from "axios";
-import { useSession } from 'next-auth/react';
+} from "@/components/ui/form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Textarea } from "@/components/ui/textarea"
+import axios from "axios"
+import { useSession } from 'next-auth/react'
 import { useToast } from "@/components/ui/use-toast"
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { FileInput } from "@/components/ui/file-input"
+import { motion } from "framer-motion"
+import { GitHubLogoIcon, GlobeIcon  } from "@radix-ui/react-icons"
+import { TagIcon } from "lucide-react"
 
 const NewProject = () => {
-  const { data: session, status } = useSession();
-  const { toast } = useToast();
-  const router = useRouter();
+  const { data: session, status } = useSession()
+  const { toast } = useToast()
+  const router = useRouter()
 
   const formSchema = z.object({
     title: z.string().min(2, "Title must be at least 2 characters long"),
@@ -267,8 +264,9 @@ const NewProject = () => {
     githubLink: z.string().url("Must be a valid URL").min(10, "GitHub Link must be at least 10 characters long"),
     liveLink: z.string().url("Must be a valid URL").min(10, "Live Link must be at least 10 characters long"),
     isPublic: z.boolean().default(true),
-    tags: z.string().min(1, "Must include at least one tag"), // Handle splitting later
-  });
+    tags: z.string().min(1, "Must include at least one tag"),
+    projectAttachment: z.instanceof(File).optional(),
+  })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -280,160 +278,216 @@ const NewProject = () => {
       isPublic: true,
       tags: "",
     },
-  });
+  })
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const userId = session?.user?.id;
-    const username = session?.user?.name;
+    const userId = session?.user?.id
+    const username = session?.user?.name
 
     if (!userId || !username) {
-      alert("User not logged in.");
-      return;
+      toast({
+        title: "Error",
+        description: "User not logged in.",
+        variant: "destructive",
+      })
+      return
     }
 
-    const tagsArray = data.tags.split(",").map(tag => tag.trim());
+    const tagsArray = data.tags.split(",").map(tag => tag.trim())
+
+    const formData = new FormData()
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === 'projectAttachment' && value instanceof File) {
+        formData.append(key, value)
+      } else if (typeof value === 'string' || typeof value === 'boolean') {
+        formData.append(key, value.toString())
+      }
+    })
+    formData.append('userId', userId)
+    formData.append('username', username)
+    formData.append('tags', JSON.stringify(tagsArray))
 
     try {
-      await axios.post("/api/projects", { ...data, userId, username, tags: tagsArray });
+      await axios.post("/api/projects", formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
       toast({
-        title: "Hurrayyy",
+        title: "Success",
         description: "Project created successfully!",
-      });
-      router.push(`/${username}/projects`);
+      })
+      router.push(`/${username}/projects`)
     } catch (error) {
-      console.error("Error creating project:", error);
+      console.error("Error creating project:", error)
       toast({
-        title: "Error!",
-        description: "Oops!! Something went wrong",
+        title: "Error",
+        description: "Oops! Something went wrong",
         variant: "destructive",
-      });
+      })
     }
-  };
+  }
 
   return (
-    <div className="max-w-4xl mx-auto justify-center bg-transparent shadow-lg rounded-lg p-6 flex space-x-6 border border-slate-200 ">
-      <div className="w-full">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel className="text-slate-200">Project Title</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Catchy title"
-                      {...field}
-                      className="border-gray-400 rounded-lg bg-transparent"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-slate-200">Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Describe your project here..."
-                      className="resize-none border-gray-400 rounded-lg bg-transparent"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div className="flex space-x-4">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="container mx-auto px-4 py-8"
+    >
+      <Card className="max-w-4xl mx-auto bg-gradient-to-br from-gray-900 to-gray-800 shadow-xl rounded-xl border border-gray-700">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-2xl font-bold text-white">Create New Project</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
-                name="liveLink"
+                name="title"
                 render={({ field }) => (
-                  <FormItem className="w-1/2">
-                    <FormLabel className="text-slate-200">Live Project Link</FormLabel>
+                  <FormItem>
+                    <FormLabel className="text-white">Project Title</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="https://myproject.com"
+                        placeholder="Enter a catchy title"
                         {...field}
-                        className="border-gray-400 rounded-lg bg-transparent"
+                        className="bg-gray-800 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500 focus:ring-purple-500"
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
-                name="githubLink"
+                name="description"
                 render={({ field }) => (
-                  <FormItem className="w-1/2">
-                    <FormLabel className="text-slate-200">GitHub Link</FormLabel>
+                  <FormItem>
+                    <FormLabel className="text-white">Description</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="https://github.com/username/project"
+                      <Textarea
+                        placeholder="Describe your project here..."
+                        className="bg-gray-800 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500 focus:ring-purple-500 min-h-[100px]"
                         {...field}
-                        className="rounded-lg bg-transparent"
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="liveLink"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white">Live Project Link</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <GlobeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                          <Input
+                            placeholder="https://myproject.com"
+                            {...field}
+                            className="bg-gray-800 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500 focus:ring-purple-500 pl-10"
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="githubLink"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white">GitHub Link</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <GitHubLogoIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                          <Input
+                            placeholder="https://github.com/username/project"
+                            {...field}
+                            className="bg-gray-800 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500 focus:ring-purple-500 pl-10"
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-            <FormField
-              control={form.control}
-              name="tags"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-slate-200">Tags</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter tags separated by commas"
-                      {...field}
-                      className="border-gray-400 rounded-lg bg-transparent"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Tags</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <TagIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <Input
+                          placeholder="Enter tags separated by commas"
+                          {...field}
+                          className="bg-gray-800 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500 focus:ring-purple-500 pl-10"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="isPublic"
-              render={({ field }) => (
-                <FormItem className="w-1/2 flex items-center space-x-3 rounded-lg p-4 bg-transparent">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="bg-white mt-2"
-                    />
-                  </FormControl>
-                  <FormLabel className="text-slate-200">Make public</FormLabel>
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="projectAttachment"
+                render={({ field: { onChange, ...rest } }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Project Attachment</FormLabel>
+                    {/* <FormControl>
+                      <Input
+                        accept="image/*,.pdf,.zip"
+                        onChange={(e: any) => onChange(e.target.files?.[0])}
+                        {...rest}
+                        className="bg-gray-800 border-gray-600 text-white focus:border-purple-500 focus:ring-purple-500"
+                      />
+                    </FormControl> */}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <Button
-              type="submit"
-              className=" bg-purple-400 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg"
-            >
-              Submit Project
-            </Button>
-          </form>
-        </Form>
-      </div>
-    </div>
-  );
-};
+              <FormField
+                control={form.control}
+                name="isPublic"
+                render={({ field }) => (
+                  <FormItem className="flex items-center space-x-3 rounded-lg p-4 bg-gray-800 border border-gray-700">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="bg-gray-700 border-gray-600 text-purple-500 focus:ring-purple-500"
+                      />
+                    </FormControl>
+                    <FormLabel className="text-white cursor-pointer">Make project public</FormLabel>
+                  </FormItem>
+                )}
+              />
 
-export default NewProject;
+              <Button
+                type="submit"
+                className=" bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+              >
+                Submit Project
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </motion.div>
+  )
+}
+
+export default NewProject
