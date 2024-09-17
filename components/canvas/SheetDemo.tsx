@@ -6,7 +6,7 @@ import {
   SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
+  SheetFooter,  
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -50,24 +50,31 @@ export function SheetDemo() {
             <Link href="/home" className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
               <HomeIcon className="h-6 w-6 mr-2" /> Home
             </Link>
+
             <Link href={`/${session?.user?.name}/projects`} className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
               <FolderIcon className="h-6 w-6 mr-2" /> Your Projects
             </Link>
+
             <Link href={`/${session?.user?.name}`} className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
               <UserIcon className="h-6 w-6 mr-2" /> Profile
             </Link>
+
             <Link href="/new" className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
               <PlusCircleIcon className="h-6 w-6 mr-2" /> Create Project
             </Link>
+
             <Link href={`/${session?.user?.name}/bookmarks`} className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
               <BookmarkIcon className="h-6 w-6 mr-2" /> Bookmarks
             </Link>
+
             <Link href={`/portfolios`} className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
               <BookmarkIcon className="h-6 w-6 mr-2" /> Portfolios
             </Link>
+
             <UserLogout className="flex items-center p-4 hover:bg-gray-700 hover:rounded-md text-purple-400">
               <LogOutIcon className="h-6 w-6 mr-2" /> Logout
             </UserLogout>
+
           </nav>
         </motion.div>
 
@@ -87,3 +94,8 @@ export function SheetDemo() {
     </Sheet>
   )
 }
+
+
+
+
+

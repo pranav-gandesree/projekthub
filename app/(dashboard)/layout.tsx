@@ -1,5 +1,7 @@
 import Navbar from "@/components/Navbar";
 
+// import { Sidebar } from "@/components/canvas/SheetDemo";
+
 export default function HomeLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col min-h-screen w-full">
@@ -17,3 +19,22 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
     </div>
   );
 }
+
+
+
+
+
+// export default function Layout({ children }: { children: React.ReactNode }) {
+
+
+//   return (
+//     <div className="min-h-screen bg-gray-900 text-white">
+//      < Sidebar/>
+//       <main className="pt-16 pb-8 px-4">
+//         <div className="container mx-auto">
+//           {children}
+//         </div>
+//       </main>
+//     </div>
+//   )
+// }
