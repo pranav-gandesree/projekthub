@@ -1,5 +1,5 @@
 // app/users/[username]/page.tsx
-import MarkdownEditor from '@/components/canvas/Markdown'
+// import MarkdownEditor from '@/components/canvas/Markdown'
 import UserProfile from '@/components/canvas/UserProfile'
 
 export default function UserPage({ params }: { params: { username: string } }) {
