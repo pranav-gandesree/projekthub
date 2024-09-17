@@ -274,6 +274,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { Badge } from '@/components/ui/badge'
+import Image from 'next/image'
 
 interface User {
   id: number
@@ -427,7 +428,7 @@ export default function ProjectGallery() {
                   <CardHeader className="relative p-0">
                     {project.image ? (
                       <div className="relative h-48 overflow-hidden">
-                        <img
+                        <Image
                           src={project.image}
                           alt={`${project.title} thumbnail`}
                           className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"

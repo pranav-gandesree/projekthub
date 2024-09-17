@@ -16,7 +16,7 @@ export const uploadMiddleware = (req: NextApiRequest, res: NextApiResponse, next
     if (err) return res.status(500).json({ error: 'Error parsing form data' });
 
     req.body = fields;
-    req. = files.image[0];
+    // req. = files.image[0];
     next();
   });
 };

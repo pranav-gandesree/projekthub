@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { GithubIcon, ExternalLinkIcon, BookmarkIcon } from 'lucide-react';
 import Bookmark from './Bookmark';
+import Image from 'next/image';
 
 const UserBookmarks = ({ username }: { username: string }) => {
   const [bookmarks, setBookmarks] = useState<any[]>([]);
@@ -61,7 +62,7 @@ const UserBookmarks = ({ username }: { username: string }) => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold mb-8 text-center">{user}'s Bookmarks</h2>
+      <h2 className="text-3xl font-bold mb-8 text-center">{user} Bookmarks</h2>
       <motion.div 
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         initial={{ opacity: 0, y: 20 }}
@@ -95,7 +96,7 @@ const UserBookmarks = ({ username }: { username: string }) => {
                 <CardContent className="flex-grow">
                   {bookmark.image && (
                     <div className="relative h-48 mb-4 overflow-hidden rounded-md">
-                      <img
+                      <Image
                         src={bookmark.image}
                         alt={`${bookmark.title} thumbnail`}
                         className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
