@@ -323,30 +323,30 @@ export default function ProjectGallery() {
     }
 
     const fetchBookmarks = async () => {
-      if (session?.user?.id) {
+      if (session?.user.id) {
         try {
-          const response = await fetch(`/api/users/${session.user.id}/bookmarks`);
+          const response = await fetch(`/api/users/${session.user.id}/bookmarks`)
           if (!response.ok) {
-            throw new Error('Failed to fetch bookmarks');
+            throw new Error('Failed to fetch bookmarks')
           }
-          const data = await response.json();
-          setBookmarks(new Set(data.bookmarks));
-          localStorage.setItem('bookmarks', JSON.stringify(data.bookmarks));
+          const data = await response.json()
+          setBookmarks(new Set(data.bookmarks))
+          localStorage.setItem('bookmarks', JSON.stringify(data.bookmarks))
         } catch (error) {
-          console.error('Failed to fetch bookmarks', error);
+          console.error('Failed to fetch bookmarks', error)
         }
       } else {
         console.warn('Session or user ID is not available');
       }
-    
+      
+    }
 
     fetchProjects()
     fetchBookmarks()
   }, [session])
 
 
-
-
+  
 
   const handleBookmark = async (projectId: number, action: 'add' | 'remove') => {
     try {
