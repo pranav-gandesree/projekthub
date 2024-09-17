@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { SiTypescript, SiVisualstudiocode, SiGithub, SiSolana } from 'react-icons/si';
+import DisplayPortfolios from "./DisplayPortfolios"
 
 
 const floatAnimation = {
@@ -34,34 +35,64 @@ type Submission = {
 export default function PortfolioPage() {
     const [githubLink, setGithubLink] = useState('')
   const [portfolioLink, setPortfolioLink] = useState('')
-  const [submissions, setSubmissions] = useState<{ github: string; portfolio: string }[]>([])
+  const [submissions, setSubmissions] = useState<Submission[]>([])
 
   const { data: session } = useSession()
 
-  // Load submissions from localStorage
-  useEffect(() => {
-    const savedSubmissions = localStorage.getItem('submissions')
-    if (savedSubmissions) {
-      setSubmissions(JSON.parse(savedSubmissions))
-    }
-  }, [])
-
-  // Save submissions to localStorage
-  useEffect(() => {
-    if (submissions.length > 0) {
-      localStorage.setItem('submissions', JSON.stringify(submissions))
-    }
-  }, [submissions])
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (githubLink && portfolioLink) {
-      const newSubmission = { github: githubLink, portfolio: portfolioLink }
-      setSubmissions([...submissions, newSubmission])
-      setGithubLink('')
-      setPortfolioLink('')
-    }
-  }
+    // Fetch all portfolios from the backend
+    useEffect(() => {
+      const fetchSubmissions = async () => {
+        try {
+          const response = await fetch('/api/portfolios');
+          const data = await response.json();
+          console.log(data)
+          
+          // Ensure data is an array before setting it
+          if (Array.isArray(data.portfolios)) {
+            setSubmissions(data.portfolios);
+          } else {
+            console.error("Fetched data is not an array:", data);
+          }
+        } catch (error) {
+          console.error('Error fetching portfolios:', error);
+        }
+      };
+  
+      fetchSubmissions();
+    }, []);
+  
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+  
+      if (githubLink && portfolioLink) {
+        try {
+          const newSubmission = {
+            githubLink,
+            portfolioLink,
+            userId: session?.user?.id || null, // Send null for anonymous
+          };
+  
+          const response = await fetch('/api/portfolios', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newSubmission),
+          });
+  
+          if (response.ok) {
+            const result = await response.json();
+            console.log(result)
+            setSubmissions([...submissions, result.newPortfolio]); // Update UI
+            setGithubLink('');
+            setPortfolioLink('');
+          } else {
+            console.error('Error submitting portfolio:', await response.json());
+          }
+        } catch (error) {
+          console.error('Error submitting portfolio:', error);
+        }
+      }
+    };
+  
 
   return (
     <>
@@ -170,50 +201,10 @@ export default function PortfolioPage() {
 
 
 
-        <motion.div
-          className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.8 }}
-        >
-          {submissions.map((submission, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-            >
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold text-slate-200">Portfolio #{index + 1}</CardTitle>
-                  {session ? (
-                    <Link href={`/${session?.user?.name}`} className='hover:underline'>
-                      <CardTitle className="text-lg font-semibold text-slate-200 hover:underline">{session?.user?.name}</CardTitle>
-                    </Link>
-                  ) : (
-                    <CardTitle className="text-lg font-semibold text-slate-200">Anonymous</CardTitle>
-                  )}
-                </CardHeader>
-                <CardContent className="flex justify-start gap-2">
-                  <Button asChild variant="outline" className="w-full">
-                    <a href={submission.github} target="_blank" rel="noopener noreferrer">
-                      <Github className="mr-2 h-4 w-4" />
-                      GitHub
-                    </a>
-                  </Button>
-                  <Button asChild variant="outline" className="w-full">
-                    <a href={submission.portfolio} target="_blank" rel="noopener noreferrer">
-                      <Globe className="mr-2 h-4 w-4" />
-                      Portfolio
-                    </a>
-                  </Button>
-                </CardContent>
-              </Card>
-          
-            </motion.div>
-          ))}
-        </motion.div>
-      </motion.div>
+
+        <DisplayPortfolios submissions={submissions}/>
+
+      </motion.div> 
     </div>
     </>
   )
