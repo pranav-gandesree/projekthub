@@ -1,9 +1,7 @@
-import { Button } from "@/components/ui/button";
-import User from "@/components/User";
+
 import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import LandingPage from "@/components/canvas/LandingPage";
 
 export default async function Home() {
