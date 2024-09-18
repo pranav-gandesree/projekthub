@@ -10,8 +10,7 @@ import { motion } from 'framer-motion';
 import { useSession } from 'next-auth/react';
 import UserLogout from '../UserLogout';
 import Link from 'next/link';
-import { 
-  CodeIcon, 
+import {  
   HomeIcon, 
   PlusCircleIcon, 
   FolderIcon, 

@@ -2,13 +2,13 @@
 'use client'
 
 import React, { useState } from 'react';
-import { Sheet, SheetTrigger, SheetContent, SheetHeader } from '@/components/ui/sheet';
-import { Menu, Home, LogOut, User, FilePlus, FileText, Bookmark, Briefcase } from 'lucide-react'; // Icons for new menu items
+import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import { Menu, Home, LogOut, User, FilePlus, FileText, Bookmark, Briefcase } from 'lucide-react'; 
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 
 
-const Sidebar = ({ userEmail }: { userEmail?: string }) => {
+const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const {data: session} = useSession();
 
@@ -75,9 +75,9 @@ const Sidebar = ({ userEmail }: { userEmail?: string }) => {
           </nav>
 
           {/* Display the email at the bottom of the sidebar in mobile view */}
-          {userEmail && (
+          {session?.user?.email && (
             <div className="mt-auto pt-4 border-t border-gray-600">
-              <span className="block text-gray-400 text-sm">{userEmail}</span>
+              <span className="block text-gray-400 text-sm">{session.user.email}</span>
             </div>
           )}
         </SheetContent>

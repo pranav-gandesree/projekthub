@@ -11,7 +11,7 @@ import {
   LinkedinIcon,
 } from "lucide-react";
 import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 
 export default async function LandingPage() {

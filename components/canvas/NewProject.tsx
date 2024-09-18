@@ -227,7 +227,7 @@
 
 'use client'
 
-import { useEffect, useState } from "react"
+
 import {
   Form,
   FormControl,
@@ -281,6 +281,7 @@ const NewProject = () => {
   })
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    //@ts-ignore
     const userId = session?.user?.id
     const username = session?.user?.name
 

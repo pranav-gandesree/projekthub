@@ -1,8 +1,7 @@
-// lib/middleware.ts
-import multer from 'multer';
+
 import { NextApiRequest, NextApiResponse } from 'next';
 import { IncomingForm } from 'formidable';
-import fs from 'fs';
+
 import path from 'path';
 
 export const uploadMiddleware = (req: NextApiRequest, res: NextApiResponse, next: () => void) => {

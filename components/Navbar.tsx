@@ -61,7 +61,7 @@
 
 
 import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CodeIcon } from "lucide-react";
 import Link from "next/link";
@@ -93,7 +93,8 @@ const Navbar = async () => {
             )}
           </div>
         )}
-        <Sidebar userEmail={session?.user?.email} />
+      
+        <Sidebar />
       </div>
     </div>
   );
