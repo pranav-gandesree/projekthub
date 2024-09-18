@@ -267,7 +267,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { BookmarkIcon, ExternalLinkIcon, GithubIcon, TagIcon } from 'lucide-react'
+import {  ExternalLinkIcon, GithubIcon, TagIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -303,7 +303,7 @@ export default function ProjectGallery() {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
-  const [bookmarks, setBookmarks] = useState<Set<number>>(new Set())
+  // const [bookmarks, setBookmarks] = useState<Set<number>>(new Set())
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -322,64 +322,65 @@ export default function ProjectGallery() {
       }
     }
 
-    const fetchBookmarks = async () => {
-      if (session?.user.id) {
-        try {
-          const response = await fetch(`/api/users/${session.user.id}/bookmarks`)
-          if (!response.ok) {
-            throw new Error('Failed to fetch bookmarks')
-          }
-          const data = await response.json()
-          setBookmarks(new Set(data.bookmarks))
-          localStorage.setItem('bookmarks', JSON.stringify(data.bookmarks))
-        } catch (error) {
-          console.error('Failed to fetch bookmarks', error)
-        }
-      } else {
-        console.warn('Session or user ID is not available');
-      }
+  //   const fetchBookmarks = async () => {
+  //     if (session?.user.id) {
+  //       try {
+  //         const response = await fetch(`/api/users/${session.user.id}/bookmarks`)
+  //         if (!response.ok) {
+  //           throw new Error('Failed to fetch bookmarks')
+  //         }
+  //         const data = await response.json()
+  //         setBookmarks(new Set(data.bookmarks))
+  //         localStorage.setItem('bookmarks', JSON.stringify(data.bookmarks))
+  //       } catch (error) {
+  //         console.error('Failed to fetch bookmarks', error)
+  //       }
+  //     } else {
+  //       console.warn('Session or user ID is not available');
+  //     }
       
-    }
+  //   }
+  //   fetchBookmarks()
 
     fetchProjects()
-    fetchBookmarks()
   }, [session])
 
 
   
 
-  const handleBookmark = async (projectId: number, action: 'add' | 'remove') => {
-    try {
-      const userId = session?.user.id;
-      const response = await fetch(`/api/users/${userId}/bookmarks/${action}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId,
-          projectId,
-        }),
-      });
+  // const handleBookmark = async (projectId: number, action: 'add' | 'remove') => {
+  //   try {
+  //     const userId = session?.user.id;
+  //     const response = await fetch(`/api/users/${userId}/bookmarks/${action}`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         userId,
+  //         projectId,
+  //       }),
+  //     });
 
-      if (!response.ok) {
-        throw new Error('Failed to update bookmark');
-      }
+  //     if (!response.ok) {
+  //       throw new Error('Failed to update bookmark');
+  //     }
 
-      setBookmarks(prev => {
-        const newBookmarks = new Set(prev);
-        if (action === 'add') {
-          newBookmarks.add(projectId);
-        } else {
-          newBookmarks.delete(projectId);
-        }
-        localStorage.setItem('bookmarks', JSON.stringify(Array.from(newBookmarks)));
-        return newBookmarks;
-      });
-    } catch (error) {
-      console.error('Error handling bookmark:', error);
-    }
-  }
+  //     setBookmarks(prev => {
+  //       const newBookmarks = new Set(prev);
+  //       if (action === 'add') {
+  //         newBookmarks.add(projectId);
+  //       } else {
+  //         newBookmarks.delete(projectId);
+  //       }
+  //       localStorage.setItem('bookmarks', JSON.stringify(Array.from(newBookmarks)));
+  //       return newBookmarks;
+  //     });
+  //   } catch (error) {
+  //     console.error('Error handling bookmark:', error);
+  //   }
+  // }
+
 
   if (loading) {
     return (
@@ -444,17 +445,7 @@ export default function ProjectGallery() {
                     ) : (
                       <div className="h-48 bg-gradient-to-br from-purple-600 to-blue-600"></div>
                     )}
-                    <div className="absolute top-4 right-4">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleBookmark(project.id, bookmarks.has(project.id) ? 'remove' : 'add')}
-                        aria-label={bookmarks.has(project.id) ? "Remove bookmark" : "Add bookmark"}
-                        className="bg-gray-800/70 hover:bg-gray-700/70"
-                      >
-                        <BookmarkIcon className={`h-5 w-5 ${bookmarks.has(project.id) ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`} />
-                      </Button>
-                    </div>
+     
                   </CardHeader>
                   <CardContent className="flex-grow p-6">
                     <div className="flex items-center justify-between mb-4">
