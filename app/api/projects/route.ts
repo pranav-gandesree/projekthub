@@ -64,43 +64,6 @@ console.log(newProject)
 
 
 
-// export async function GET() {
-//   try {
-//     const cacheKey = 'publicProjects';
-
-//     // Check if the public projects are in the cache
-//     const cachedProjects = await redisClient.get(cacheKey);
-
-//     if (cachedProjects) {
-//       // If cached, return the data from Redis
-//       return NextResponse.json(JSON.parse(cachedProjects));
-//     }
-
-//     // If not cached, fetch from the database
-//     const publicProjects = await prisma.project.findMany({
-//       where: {
-//         public: true, // Assuming `public` is the field name in your database
-//       },
-//       include: {
-//         createdBy: true, // Include the user relation
-//         tags: true,
-//       },
-//     });
-
-//     // Store the result in Redis with an expiration time (e.g., 1 hour)
-//     await redisClient.set(cacheKey, JSON.stringify(publicProjects), {
-//       EX: 3600, // Expire in 1 hour (3600 seconds)
-//     });
-
-//     // Return the data
-//     return NextResponse.json(publicProjects);
-//   } catch (error) {
-//     console.error('Error fetching public projects:', error);
-//     return NextResponse.json({ error: 'Failed to fetch public projects' }, { status: 500 });
-//   }
-// }
-
-
 
 
 
@@ -161,6 +124,7 @@ export async function GET() {
 
 
 
+
 export async function DELETE(req: Request) {
   const session = await getServerSession(authOptions);
 
@@ -179,7 +143,7 @@ export async function DELETE(req: Request) {
     const project = await prisma.project.findUnique({
       where: { id: Number(projectId) },
     });
-
+//@ts-ignore
     if (!project || project.userId !== session.user.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
@@ -190,6 +154,7 @@ export async function DELETE(req: Request) {
     });
 
     // Remove the project from Redis cache (user projects and public projects)
+    //@ts-ignore
     const userProjectsCacheKey = `user:${session.user.name}:projects`;
     const publicProjectsCacheKey = `publicProjects`;
 
