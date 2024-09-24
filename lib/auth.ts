@@ -4,8 +4,9 @@
 // import { PrismaAdapter } from '@next-auth/prisma-adapter';
 // import prisma from '@/prisma/prisma';
 // import { compare } from 'bcryptjs';
+// import { NextAuthOptions } from 'next-auth/';
 
-// export const authOptions  = {
+// export const authOptions: NextAuthOptions  = {
 //   adapter: PrismaAdapter(prisma),
 //   providers: [
 //     CredentialsProvider({
@@ -115,6 +116,9 @@
 
 
 
+
+
+
 import { NextAuthOptions } from "next-auth/";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { compare } from "bcryptjs";
@@ -158,22 +162,25 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt"
   },
+
   callbacks: {
-    jwt: async ({ user, token }:any) => {
-      if (user) {
-        token.uid = user.id;
-        token.email = user.email;
-      }
-      return token;
-    },
-    session: async ({ session, token }:any) => {
-      if (session.user) {
-        session.user.id = token.uid;
-        session.user.email = token.email;
+    session: async ({ session, token }) => {
+      if (session?.user) {
+
+        session.user.id = token.sub
+        // session.user.email = token.email;
       }
       return session;
+    },
+ 
+  jwt: async ({ user, token }: any) => {
+    if (user) {
+      token.uid = user.id;
     }
+    return token;
   },
+},
+
   pages: {
     signIn: "/signin"
   },

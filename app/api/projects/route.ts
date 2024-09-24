@@ -8,6 +8,8 @@ import { authOptions } from '@/lib/auth';
 export async function POST(request: Request) {
   const { title, description, image, liveLink, githubLink, public: isPublic, userId, tags, username } = await request.json();
 
+  console.log(title, description, image, liveLink, githubLink, isPublic, userId, tags, username)
+
   try {
     const createdTags = await Promise.all(
       tags.map(async (tag: string) => {

@@ -66,6 +66,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CodeIcon } from "lucide-react";
 import Link from "next/link";
 import Sidebar from "./canvas/Sidebar";
+import { Button } from "./ui/button";
 
 const Navbar = async () => {
   const session = await getServerSession(authOptions);
@@ -85,16 +86,28 @@ const Navbar = async () => {
         {session?.user && session.user.email && (
           <div className="hidden md:flex items-center space-x-2">
             <span className="text-white">{session.user.email}</span>
-            {session.user.image && (
+            {session?.user?.image && (
               <Avatar>
-                <AvatarImage src={session.user.image} />
-                <AvatarFallback>{session.user.name?.[0]}</AvatarFallback>
+                <AvatarImage src={session?.user?.image} />
+                <AvatarFallback>{session?.user?.name?.[0]}</AvatarFallback>
               </Avatar>
             )}
           </div>
         )}
       
-        <Sidebar />
+      {session ? (
+  <Sidebar />
+) : (
+  <nav className="ml-auto flex gap-4">
+    <Link href="/signin">
+      <Button variant="secondary">Sign In</Button>
+    </Link>
+    <Link href="/portfolios">
+      <Button variant="secondary">Discover portfolios</Button>
+    </Link>
+  </nav>
+)}
+
       </div>
     </div>
   );

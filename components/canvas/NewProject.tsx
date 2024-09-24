@@ -281,7 +281,7 @@ const NewProject = () => {
   })
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    //@ts-ignore
+    // @ts-ignore
     const userId = session?.user?.id
     const username = session?.user?.name
 
@@ -296,19 +296,34 @@ const NewProject = () => {
 
     const tagsArray = data.tags.split(",").map(tag => tag.trim())
 
+    // const formData = new FormData()
+    // Object.entries(data).forEach(([key, value]) => {
+    //   if (key === 'projectAttachment' && value instanceof File) {
+    //     formData.append(key, value)
+    //   } else if (typeof value === 'string' || typeof value === 'boolean') {
+    //     formData.append(key, value.toString())
+    //   }
+    // })
+
     const formData = new FormData()
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === 'projectAttachment' && value instanceof File) {
-        formData.append(key, value)
-      } else if (typeof value === 'string' || typeof value === 'boolean') {
-        formData.append(key, value.toString())
-      }
-    })
+    formData.append('title', data.title)
+    formData.append('description', data.description)
+    formData.append('githubLink', data.githubLink)
+    formData.append('liveLink', data.liveLink)
+    formData.append('isPublic', data.isPublic.toString())
+    formData.append('tags', JSON.stringify(tagsArray))
+
     formData.append('userId', userId)
     formData.append('username', username)
     formData.append('tags', JSON.stringify(tagsArray))
 
+    
+
+console.log("formdata", formData)
+
+
     try {
+      console.log("formdata is",formData)
       await axios.post("/api/projects", formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
@@ -441,24 +456,24 @@ const NewProject = () => {
                 )}
               />
 
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="projectAttachment"
                 render={({ field: { onChange, ...rest } }) => (
                   <FormItem>
                     <FormLabel className="text-white">Project Attachment</FormLabel>
-                    {/* <FormControl>
+                    <FormControl>
                       <Input
                         accept="image/*,.pdf,.zip"
                         onChange={(e: any) => onChange(e.target.files?.[0])}
                         {...rest}
                         className="bg-gray-800 border-gray-600 text-white focus:border-purple-500 focus:ring-purple-500"
                       />
-                    </FormControl> */}
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
 
               <FormField
                 control={form.control}

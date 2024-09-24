@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Menu, Home, LogOut, User, FilePlus, FileText, Bookmark, Briefcase } from 'lucide-react'; 
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 
 
 const Sidebar = () => {
@@ -66,7 +66,8 @@ const Sidebar = () => {
                 </Link>
               </li>
               <li>
-                <button className="flex items-center space-x-2 text-gray-300 hover:text-white">
+                <button className="flex items-center space-x-2 text-gray-300 hover:text-white"
+                 onClick={() => signOut()}>
                   <LogOut size={20} />
                   <span>Logout</span>
                 </button>
@@ -80,6 +81,7 @@ const Sidebar = () => {
               <span className="block text-gray-400 text-sm">{session.user.email}</span>
             </div>
           )}
+
         </SheetContent>
 
         

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import ProjectCard from './ProjectCard'; // Adjust the path as necessary
+import ProjectCard from './ProjectCard'; 
 import { useSession } from 'next-auth/react';
 import {
   AlertDialog,

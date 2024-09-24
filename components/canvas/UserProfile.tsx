@@ -669,10 +669,12 @@ export default function UserProfile({ username }: { username: string }) {
             <p className="text-center text-gray-500">No projects found.</p>
           )}
           <div className="mt-6">
-            <Link href={`/${session?.user.name}/projects`}>
+            {/* <Link href={`/${session?.user.name}/projects`}> */}
+            <Link href={`/${session?.user?.name}/projects`}>
               <Button className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
                 Show more projects
               </Button>
+          
             </Link>
           </div>
         </div>
