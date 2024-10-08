@@ -513,7 +513,7 @@ export default function UserProfile({ username }: { username: string }) {
                     src={`https://avatars.githubusercontent.com/${username}`}
                     alt={user.name}
                   />
-                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                  {/* <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback> */}
                 </Avatar>
               </CardHeader>
               <CardContent className="px-6 py-4">
