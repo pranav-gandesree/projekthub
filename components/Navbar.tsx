@@ -58,19 +58,21 @@
 
 
 
+'use client'
 
-
-import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth/next";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CodeIcon } from "lucide-react";
 import Link from "next/link";
 import Sidebar from "./canvas/Sidebar";
 import { Button } from "./ui/button";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
-const Navbar = async () => {
-  const session = await getServerSession(authOptions);
+const Navbar = () => {
+  const { data: session } = useSession()
 
+  // const router = useRouter();
+  
   return (
     <div className="py-2 h-20 fixed top-0 flex flex-row justify-between items-center w-full z-[999] right-0 px-4 bg-slate-900 shadow-lg">
       <Link href='/home' className="flex flex-row items-center ml-4">
@@ -102,9 +104,15 @@ const Navbar = async () => {
     <Link href="/signin">
       <Button variant="secondary">Sign In</Button>
     </Link>
-    <Link href="/portfolios">
-      <Button variant="secondary">Discover portfolios</Button>
-    </Link>
+    {/* {router.asPath === '/portfolios' ? (
+        <Link href="/">
+          <Button variant="secondary">Home</Button>
+        </Link>
+      ) : ( */}
+        <Link href="/portfolios">
+          <Button variant="secondary">Discover Portfolios</Button>
+        </Link>
+      {/* )} */}
   </nav>
 )}
 

@@ -22,11 +22,23 @@ model User {
   sessions      Session[]
   projects      Project[] @relation("UserProjects")
   bookmarks     Project[] @relation("UserBookmarks")
+  userDetails   UserDetails?
 
   @@map("users")
   UserProjectBookmarks UserProjectBookmarks[]
   Portfolios Portfolios[]
 }
+
+
+model UserDetails {
+  userId       String   @id
+  user         User     @relation(fields: [userId], references: [id])
+  twitter      String?  // Optional Twitter link
+  github       String?  // Optional GitHub link
+  portfolio    String?  // Optional portfolio link
+  bio          String?  // Optional user bio
+}
+
 
 model Project {
   id          Int      @id @default(autoincrement())

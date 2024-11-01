@@ -15,7 +15,7 @@ export async function POST(req: Request) {
         const body = await req.json();
         let { email, username, password } = userSchema.parse(body);
 
-        // Sanitize username by removing spaces
+        // Sanitize username by removing spcaces
         username = username.trim().replace(/\s+/g, '');
         console.log(username)
 

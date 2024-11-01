@@ -20,8 +20,16 @@ export async function GET(request: Request, { params }: { params: { username: st
         },
         select: {
           id: true,
-          name: true,  // Ensure this is included
-          email: true, // Ensure this is included
+          name: true,  
+          email: true, 
+          userDetails: { // Include userDetails relation here
+            select: {
+              twitter: true,
+              github: true,
+              portfolio: true,
+              bio: true,
+            },
+          },
           projects: {
             select: {
               id: true,
