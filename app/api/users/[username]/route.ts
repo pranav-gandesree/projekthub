@@ -7,23 +7,10 @@ const prisma = new PrismaClient();
 
 export async function GET(request: Request, { params }: { params: { username: string } }) {
   const { username } = params;
-  const cacheKey = `user:${username}:projects`;
 
   try {
     let user = null;
 
-    // Try to fetch from Redis cache first
-    try {
-      const cachedUser = await redisClient.get(cacheKey);
-
-      if (cachedUser) {
-        console.log('Cache Hit:', JSON.parse(cachedUser));  // Log cache hit
-        return NextResponse.json(JSON.parse(cachedUser));
-      }
-    } catch (redisError) {
-      console.error('Redis fetch error:', redisError); // Log Redis error
-      // Continue to the database fetch if Redis fails
-    }
 
     // If no cache, fetch from the database
     try {
@@ -59,16 +46,6 @@ export async function GET(request: Request, { params }: { params: { username: st
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
       }
 
-      // Cache the result in Redis with an expiration time (1 hour)
-      try {
-        await redisClient.setEx(cacheKey, 3600, JSON.stringify(user)); // Cache for 1 hour
-        console.log('Data stored in Redis:', user);  // Log data stored in Redis
-      } catch (redisSetError) {
-        console.error('Redis set error:', redisSetError); // Log Redis set error
-        // Even if caching fails, continue to return the response from DB
-      }
-
-      // Return the data from the database
       return NextResponse.json(user);
     } catch (dbError) {
       console.error('Database fetch error:', dbError); // Log database error
