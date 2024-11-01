@@ -320,6 +320,8 @@ export default function ProjectGallery() {
       } finally {
         setLoading(false)
       }
+      
+      console.log(process.env.REDIS_URL)
     }
 
   //   const fetchBookmarks = async () => {

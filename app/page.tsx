@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import LandingPage from "@/components/canvas/LandingPage";
+import { useEffect } from "react";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -10,6 +11,7 @@ export default async function Home() {
   if (session) {
     redirect('/home'); 
   }
+
 
   return (
     <>

@@ -37,24 +37,25 @@ export async function POST(request: Request) {
     });
 console.log(newProject)
 
-    //   // Cache Update: User Projects
-      const userProjectsCacheKey = `user:${username}:projects`;
 
-        // Cache the result in Redis
-    await redisClient.setEx(userProjectsCacheKey, 3600, JSON.stringify(newProject)); //cache for 1 hour
-    console.log('succesfully created a proj and added in redis', newProject); 
+    // //   // Cache Update: User Projects
+    //   const userProjectsCacheKey = `user:${username}:projects`;
+
+    //     // Cache the result in Redis
+    // await redisClient.setEx(userProjectsCacheKey, 3600, JSON.stringify(newProject)); //cache for 1 hour
+    // console.log('succesfully created a proj and added in redis', newProject); 
 
 
-      // Cache Update: Public Projects (if the project is public)
-      if (isPublic) {
-        const publicProjectsCacheKey = `publicProjects`;
-        const cachedPublicProjects = await redisClient.get(publicProjectsCacheKey);
-        if (cachedPublicProjects) {
-          // const publicProjects = JSON.parse(cachedPublicProjects);
-          // publicProjects.push(newProject);
-          await redisClient.setEx(publicProjectsCacheKey, 3600, JSON.stringify(newProject));
-        }
-      }
+    //   // Cache Update: Public Projects (if the project is public)
+    //   if (isPublic) {
+    //     const publicProjectsCacheKey = `publicProjects`;
+    //     const cachedPublicProjects = await redisClient.get(publicProjectsCacheKey);
+    //     if (cachedPublicProjects) {
+    //       // const publicProjects = JSON.parse(cachedPublicProjects);
+    //       // publicProjects.push(newProject);
+    //       await redisClient.setEx(publicProjectsCacheKey, 3600, JSON.stringify(newProject));
+    //     }
+    //   }
 
     return NextResponse.json(newProject);
   } catch (error) {
@@ -76,22 +77,22 @@ export async function GET() {
     let publicProjects = null;
 
     // Try to get cached projects from Redis
-    try {
-      const cachedProjects = await redisClient.get(cacheKey);
-      if (cachedProjects) {
-        // If cached, return the data from Redis
-        return NextResponse.json(JSON.parse(cachedProjects));
-      }
-    } catch (redisError) {
-      console.error('Redis fetch error:', redisError);
-      // Continue to fetch from the database if Redis fails
-    }
+    // try {
+    //   const cachedProjects = await redisClient.get(cacheKey);
+    //   if (cachedProjects) {
+    //     // If cached, return the data from Redis
+    //     return NextResponse.json(JSON.parse(cachedProjects));
+    //   }
+    // } catch (redisError) {
+    //   console.error('Redis fetch error:', redisError);
+    //   // Continue to fetch from the database if Redis fails
+    // }
 
     // If not cached or Redis failed, fetch from the database
     try {
       publicProjects = await prisma.project.findMany({
         where: {
-          public: true, // Assuming `public` is the field name in your database
+          public: true, 
         },
         include: {
           createdBy: true, // Include the user relation
@@ -100,14 +101,14 @@ export async function GET() {
       });
 
       // Store the result in Redis with an expiration time (e.g., 1 hour)
-      try {
-        await redisClient.set(cacheKey, JSON.stringify(publicProjects), {
-          EX: 3600, // Expire in 1 hour (3600 seconds)
-        });
-      } catch (redisSetError) {
-        console.error('Redis set error:', redisSetError);
-        // If Redis set fails, log the error but don't break the response
-      }
+      // try {
+      //   await redisClient.set(cacheKey, JSON.stringify(publicProjects), {
+      //     EX: 3600, // Expire in 1 hour (3600 seconds)
+      //   });
+      // } catch (redisSetError) {
+      //   console.error('Redis set error:', redisSetError);
+      //   // If Redis set fails, log the error but don't break the response
+      // }
 
       // Return the data from the database
       return NextResponse.json(publicProjects);
