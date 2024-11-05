@@ -10,8 +10,6 @@ const AuthLayout: FC<AuthLayoutProps> = ({children}) => {
     <>
     
     <div className="bg-slate-200 p-6 rounded-md">   
-      <div className="text-white bg-red-400"> hi from signin layout
-      </div> 
       {children}
     </div>
     </>

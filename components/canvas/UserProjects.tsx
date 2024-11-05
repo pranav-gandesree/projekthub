@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -16,7 +16,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { toast, Toaster } from 'sonner';
 import { Skeleton } from '../ui/skeleton';
-
+import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
 
 interface Tag {
   id: number;
@@ -29,7 +30,7 @@ interface Project {
   description: string;
   githubLink: string;
   liveLink: string;
-  isPublic: boolean;
+  public: boolean;
   image?: string;
   userId: string;
   tags: Tag[];
@@ -48,6 +49,7 @@ const UserProjects = ({ username }: { username: string }) => {
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -60,7 +62,7 @@ const UserProjects = ({ username }: { username: string }) => {
           isPublic: project.public,
         }));
 
-        console.log(mappedProjects)
+        console.log(mappedProjects);
         setUser({ ...userData, projects: mappedProjects });
       } catch (error) {
         setError('Error fetching user');
@@ -113,40 +115,40 @@ const UserProjects = ({ username }: { username: string }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[1, 2, 3, 4, 5].map((_, index) => (
           <div key={index} className="p-4 border rounded-lg">
-            <Skeleton className='h-40'/> {/* Placeholder for image */}
+            <Skeleton className="h-40" />
             <div className="mt-4">
-              <Skeleton  /> {/* Placeholder for title */}
-              <Skeleton className="mt-2 h-6" /> {/* Placeholder for description */}
-              <Skeleton  className="mt-2 h-6" /> {/* Placeholder for links */}
+              <Skeleton />
+              <Skeleton className="mt-2 h-6" /> 
+              <Skeleton className="mt-2 h-6" /> 
             </div>
           </div>
         ))}
       </div>
-    )
+    );
   }
 
   return (
     <div>
-      <h2 className='text-2xl mb-4'>Your Projects</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Toaster />
-        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle className='text-black'>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the project from our servers.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setIsOpen(false)} className='text-black'>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={deleteProject}>Yes, Delete</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-
-        {user.projects && user.projects.length > 0 ? (
-          user.projects.map((project) => (
+      <h2 className="text-2xl mb-4">Your Projects</h2>
+      <Toaster />
+      <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-black">Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the project from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setIsOpen(false)} className="text-black">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={deleteProject}>Yes, Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+{/* 
+      {user.projects && user.projects.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {user.projects.map((project) => (
             <ProjectCard
               key={project.id}
               title={project.title}
@@ -154,29 +156,70 @@ const UserProjects = ({ username }: { username: string }) => {
               image={project?.image}
               githubLink={project.githubLink}
               liveLink={project.liveLink}
-              isPublic={project.isPublic}
+              isPublic={project.public}
               isAuthenticated={project.userId === session?.user?.id}
               tags={project.tags}
               onDelete={() => openDeleteDialog(project.id)}
             />
-          ))
-        ) : (
-          <p>No projects found.</p>
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center mt-16 justify-center h-full p-4 rounded-md shadow-lg">
+          <p className="text-lg text-gray-600 mb-4">No projects found.</p>
+          <Button
+            onClick={() => router.push("/new")}
+            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-150"
+          >
+            Add Project
+          </Button>
+        </div>
+      )} */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+{user.projects && user.projects.length > 0 ? (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {user.projects
+      .filter((project) => project.public || user.id === session?.user?.id) 
+      .map((project) => (
+        <ProjectCard
+          key={project.id}
+          title={project.title}
+          description={project.description}
+          image={project?.image}
+          githubLink={project.githubLink}
+          liveLink={project.liveLink}
+          isPublic={project.public}
+          isAuthenticated={project.userId === session?.user?.id}
+          tags={project.tags}
+          onDelete={() => openDeleteDialog(project.id)}
+        />
+      ))}
+  </div>
+) : (
+  <div className="flex flex-col items-center mt-16 justify-center h-full p-4 rounded-md shadow-lg">
+    <p className="text-lg text-gray-600 mb-4">No projects found.</p>
+    <Button
+      onClick={() => router.push("/new")}
+      className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-150"
+    >
+      Add Project
+    </Button>
+  </div>
+)}
+
     </div>
   );
 };
 
 export default UserProjects;
-
-
-
-
-
-
-
-
-
-
-

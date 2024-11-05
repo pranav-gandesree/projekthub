@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from "react";
 import {
   Form,
   FormControl,
@@ -22,7 +21,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { useRouter } from "next/navigation";
 
 const NewProject = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -32,7 +31,7 @@ const NewProject = () => {
     githubLink: z.string().url("Must be a valid URL").min(10, "GitHub Link must be at least 10 characters long"),
     liveLink: z.string().url("Must be a valid URL").min(10, "Live Link must be at least 10 characters long"),
     isPublic: z.boolean().default(true),
-    tags: z.string().min(1, "Must include at least one tag"), // Handle splitting later
+    tags: z.string().min(1, "Must include at least one tag"),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
