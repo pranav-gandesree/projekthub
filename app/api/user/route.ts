@@ -15,11 +15,10 @@ export async function POST(req: Request) {
         const body = await req.json();
         let { email, username, password } = userSchema.parse(body);
 
-        // Sanitize username by removing spcaces
         username = username.trim().replace(/\s+/g, '');
         console.log(username)
 
-        // Check if email already exists
+
         const existingUserByEmail = await prisma.user.findUnique({
             where: { email: email }
         });
@@ -31,7 +30,7 @@ export async function POST(req: Request) {
             }, { status: 400 });
         }
 
-        // Uncomment and use this if you want to check for existing username as well
+ 
         const existingUserByUsername = await prisma.user.findUnique({
             where: { name: username }
         });

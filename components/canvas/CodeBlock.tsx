@@ -1,4 +1,4 @@
-// CodeBlock.tsx
+
 
 // @ts-ignore
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';

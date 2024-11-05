@@ -35,15 +35,13 @@ export default function PortfolioPage() {
 
   const { data: session } = useSession()
 
-  // Fetch all portfolios from the backend
   useEffect(() => {
     const fetchSubmissions = async () => {
       try {
         const response = await fetch('/api/portfolios');
         const data = await response.json();
         console.log(data)
-        
-        // Ensure data is an array before setting it
+
         if (Array.isArray(data.portfolios)) {
           setSubmissions(data.portfolios);
         } else {
@@ -66,7 +64,7 @@ export default function PortfolioPage() {
           githubLink,
           portfolioLink,
           //@ts-ignore
-          userId: session?.user?.id || null, // Send null for anonymous
+          userId: session?.user?.id || null, 
         };
 
         const response = await fetch('/api/portfolios', {
@@ -78,7 +76,7 @@ export default function PortfolioPage() {
         if (response.ok) {
           const result = await response.json();
           console.log(result)
-          setSubmissions([...submissions, result.newPortfolio]); // Update UI
+          setSubmissions([...submissions, result.newPortfolio]); 
           setGithubLink('');
           setPortfolioLink('');
         } else {

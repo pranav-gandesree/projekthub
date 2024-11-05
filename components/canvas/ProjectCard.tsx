@@ -184,15 +184,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   liveLink,
   tags = [],
   isPublic,
+  image,
   isAuthenticated,
   onDelete,
   // onBookmark,
 }) => {
   const [isHovered, setIsHovered] = useState(false)
 
-  const generateRandomImage = () => {
-    return `https://picsum.photos/seed/${title}/400/300`
-  }
 
   return (
     <motion.div
@@ -206,13 +204,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     >
       <Card className="overflow-hidden bg-gradient-to-br from-gray-900/90 to-gray-800/90 border border-gray-700 shadow-xl backdrop-blur-md">
         <div className="relative h-48 overflow-hidden">
-          <motion.img
-            src={generateRandomImage()}
-            alt={title}
-            className="w-full h-full object-cover"
-            animate={{ scale: isHovered ? 1.1 : 1 }}
-            transition={{ duration: 0.3 }}
-          />
+         {image ? (
+              <motion.img
+              src={image}
+              alt={title}
+              className="w-full h-full object-cover"
+              animate={{ scale: isHovered ? 1.1 : 1 }}
+              transition={{ duration: 0.3 }}
+              />
+         ) : (
+          <div className="h-48 bg-gradient-to-br from-purple-600 to-blue-600"></div>
+        )}
+         
           <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent" />
           <div className="absolute top-2 right-2 flex space-x-2">
             {isAuthenticated && (
@@ -238,7 +241,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
         <CardHeader className="relative z-10 -mt-12 pb-0">
           <div className="flex justify-between items-center">
-            <CardTitle className="text-2xl font-bold text-white mb-1 truncate">{title}</CardTitle>
+            <CardTitle className="text-2xl font-bold text-white  truncate">{title}</CardTitle>
             {!isPublic && (
               <Badge variant="secondary" className="bg-gray-700 text-gray-200">
                 <LockClosedIcon className="w-3 h-3 mr-1" />
@@ -270,7 +273,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <CardFooter className="flex justify-between gap-2 pt-0">
           <Button
             variant="default"
-            // className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-none"
             className="flex-1 bg-violet-500 text-white border-none"
             asChild
           >
@@ -280,7 +282,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             </a>
           </Button>
           <Button
-            // className="flex-1 bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 text-white border-none"
+
             className="flex-1 bg-violet-500 text-white border-none"
             asChild
           >

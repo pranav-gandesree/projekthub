@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const { userId, twitter, github, portfolio, bio } = UserDetailsSchema.parse(body);
 
-        const session = await getServerSession(); // Get the session from next-auth
+        const session = await getServerSession(); 
         if (!session || !session.user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
         const updatedUserDetails = await prisma.userDetails.upsert({
             where: { userId }, // Assumes userId is unique
             update: { twitter, github, portfolio, bio }, 
-            create: { userId, twitter, github, portfolio, bio } // Create if not exists
+            create: { userId, twitter, github, portfolio, bio } 
             
         });
 

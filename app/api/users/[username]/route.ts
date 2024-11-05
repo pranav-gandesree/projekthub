@@ -1,7 +1,7 @@
 
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import redisClient from '@/lib/cache/redis-cache';
+
 
 const prisma = new PrismaClient();
 
@@ -11,8 +11,6 @@ export async function GET(request: Request, { params }: { params: { username: st
   try {
     let user = null;
 
-
-    // If no cache, fetch from the database
     try {
       user = await prisma.user.findUnique({
         where: {
@@ -22,7 +20,7 @@ export async function GET(request: Request, { params }: { params: { username: st
           id: true,
           name: true,  
           email: true, 
-          userDetails: { // Include userDetails relation here
+          userDetails: { 
             select: {
               twitter: true,
               github: true,
@@ -35,10 +33,11 @@ export async function GET(request: Request, { params }: { params: { username: st
               id: true,
               title: true,
               description: true,
+              image:true,
               githubLink: true,
               liveLink: true,
               public: true,
-              tags: {  // Include the tags relation here
+              tags: { 
                 select: {
                   id: true,
                   name: true,
@@ -56,7 +55,7 @@ export async function GET(request: Request, { params }: { params: { username: st
 
       return NextResponse.json(user);
     } catch (dbError) {
-      console.error('Database fetch error:', dbError); // Log database error
+      console.error('Database fetch error:', dbError); 
       return NextResponse.json({ error: 'Failed to fetch user data from database' }, { status: 500 });
     }
   } catch (error) {

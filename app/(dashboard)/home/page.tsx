@@ -10,7 +10,7 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { Badge } from '@/components/ui/badge'
 import Image from 'next/image'
-import { Pagination } from "@/components/ui/pagination"; 
+// import { Pagination } from "@/components/ui/pagination"; 
 
 interface User {
   id: number
@@ -189,6 +189,8 @@ export default function ProjectGallery() {
                           src={project.image}
                           alt={`${project.title} thumbnail`}
                           className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                          width={200}
+                          height={200}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
                       </div>

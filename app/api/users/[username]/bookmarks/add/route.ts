@@ -1,4 +1,4 @@
-// app/api/users/[userId]/bookmarks/add/route.ts
+
 
 import { NextResponse } from 'next/server';
 import prisma from '@/prisma/prisma';

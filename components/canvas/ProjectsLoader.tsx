@@ -1,7 +1,7 @@
 
 
 import React from 'react'
-import { Skeleton } from '../ui/skeleton' // Adjust path if needed
+import { Skeleton } from '../ui/skeleton' 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '../ui/card'
 import { Avatar } from '../ui/avatar'
 import { Button } from '../ui/button'

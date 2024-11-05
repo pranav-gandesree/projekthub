@@ -1,4 +1,4 @@
-// app/api/projects/route.ts
+
 import { NextResponse } from "next/server";
 import prisma from "@/prisma/prisma";
 
@@ -67,6 +67,7 @@ export async function POST(request: Request) {
   }
 }
 
+
 export async function GET() {
   try {
     
@@ -76,10 +77,10 @@ export async function GET() {
     try {
       publicProjects = await prisma.project.findMany({
         where: {
-          public: true, // Assuming `public` is the field name in your database
+          public: true,
         },
         include: {
-          createdBy: true, // Include the user relation
+          createdBy: true, 
           tags: true,
         },
       });
@@ -108,7 +109,7 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const { projectId } = await req.json(); // Assuming you're passing `projectId` in the body
+  const { projectId } = await req.json(); 
 
   if (!projectId) {
     return NextResponse.json(
@@ -118,7 +119,7 @@ export async function DELETE(req: Request) {
   }
 
   try {
-    // Fetch project to check if the logged-in user is the owner
+
     const project = await prisma.project.findUnique({
       where: { id: Number(projectId) },
     });
@@ -127,7 +128,7 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    // Delete the project
+    // delete the project
     await prisma.project.delete({
       where: { id: Number(projectId) },
     });

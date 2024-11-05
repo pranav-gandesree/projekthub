@@ -21,12 +21,11 @@ import {
 } from 'lucide-react';
 
 export function SheetDemo() {
-  const { data: session } = useSession(); // Using useSession hook for client-side
-
+  const { data: session } = useSession(); 
   return (
     <Sheet>
       <SheetTrigger asChild>
-        {/* <Button variant="outline">Open</Button> */}
+
         <Button className="text-purple-500">
           <MenuIcon className="w-8 h-8" />
         </Button>
