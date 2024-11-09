@@ -285,6 +285,7 @@ const NewProject = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+
       title: "",
       description: "",
       githubLink: "",
@@ -313,6 +314,8 @@ const NewProject = () => {
         description: "Project created successfully!",
       });
       router.push(`/${username}/projects`);
+
+
     } catch (error) {
       console.error("Error creating project:", error);
       toast({
@@ -321,14 +324,12 @@ const NewProject = () => {
         variant: "destructive",
       });
     }
+
+
   };
 
   const handleUploadSuccess = (result: any) => {
     form.setValue("image", result?.info.secure_url);
-    // toast({
-    //   title: "Image Uploaded",
-    //   description: "Image uploaded successfully!",
-    // });
   };
 
   return (
@@ -428,10 +429,6 @@ const NewProject = () => {
             />
 
             <CldUploadWidget
-            //  onSuccess={(result) => {
-            //   if (typeof result.info === 'string') return;
-            //   form.setValue("image", result.info?.secure_url); 
-            // }}
             onSuccess={handleUploadSuccess}
               signatureEndpoint="/api/sign-cloudinary-params"
             >

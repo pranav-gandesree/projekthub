@@ -54,6 +54,7 @@ const UserProjects = ({ username }: { username: string }) => {
   const router = useRouter();
 
   useEffect(() => {
+
     const fetchUser = async () => {
       try {
         const response = await axios.get(`/api/users/${username}`);
@@ -64,7 +65,7 @@ const UserProjects = ({ username }: { username: string }) => {
           isPublic: project.public,
         }));
 
-        console.log(mappedProjects);
+        console.log( "mapped projects is ",mappedProjects);
         setUser({ ...userData, projects: mappedProjects });
       } catch (error) {
         setError("Error fetching user");
@@ -73,6 +74,7 @@ const UserProjects = ({ username }: { username: string }) => {
 
     fetchUser();
   }, [username]);
+  
 
   const deleteProject = async () => {
     if (!selectedProjectId) return;
@@ -103,6 +105,10 @@ const UserProjects = ({ username }: { username: string }) => {
     }
   };
 
+  const handleEdit = (projectId: number) => {
+    router.push(`/projects/edit/${projectId}`);
+  };
+
   const openDeleteDialog = (projectId: number) => {
     setSelectedProjectId(projectId);
     setIsOpen(true);
@@ -111,6 +117,8 @@ const UserProjects = ({ username }: { username: string }) => {
   if (error) {
     return <div>Error: {error}</div>;
   }
+
+
 
   if (!user) {
     return (
@@ -136,7 +144,7 @@ const UserProjects = ({ username }: { username: string }) => {
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-black">
+            <AlertDialogTitle className="text-white">
               Are you absolutely sure?
             </AlertDialogTitle>
             <AlertDialogDescription>
@@ -164,18 +172,22 @@ const UserProjects = ({ username }: { username: string }) => {
             .filter(
               (project) => project.public || user.id === session?.user?.id
             )
-            .map((project) => (
+            
+            .map((project: any) => (
+      
               <ProjectCard
                 key={project.id}
+                userId={project.userId}
                 title={project.title}
                 description={project.description}
                 image={project?.image}
                 githubLink={project.githubLink}
                 liveLink={project.liveLink}
                 isPublic={project.public}
-                isAuthenticated={project.userId === session?.user?.id}
+                isAuthenticated={  project.userId === session?.user?.id}
                 tags={project.tags}
                 onDelete={() => openDeleteDialog(project.id)}
+                onEdit= {()=>handleEdit(project.id)}
               />
             ))}
         </div>
@@ -184,7 +196,7 @@ const UserProjects = ({ username }: { username: string }) => {
           <p className="text-lg text-gray-600 mb-4">No projects found.</p>
           <Button
             onClick={() => router.push("/new")}
-            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-150"
+            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-500 focus:outline-none focus:ring-2transition-all duration-150"
           >
             Add Project
           </Button>

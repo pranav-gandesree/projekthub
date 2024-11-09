@@ -31,6 +31,7 @@ export async function GET(request: Request, { params }: { params: { username: st
           projects: {
             select: {
               id: true,
+              userId: true,
               title: true,
               description: true,
               image:true,

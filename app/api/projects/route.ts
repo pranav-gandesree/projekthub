@@ -102,6 +102,8 @@ export async function GET() {
   }
 }
 
+
+
 export async function DELETE(req: Request) {
   const session = await getServerSession(authOptions);
 
