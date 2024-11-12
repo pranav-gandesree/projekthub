@@ -86,6 +86,7 @@ const UserProjects = ({ username }: { username: string }) => {
 
       if (response.status === 200) {
         toast.success("Project deleted successfully!");
+  
         setUser((prevUser) => {
           if (prevUser) {
             const updatedProjects = prevUser.projects?.filter(
@@ -95,6 +96,7 @@ const UserProjects = ({ username }: { username: string }) => {
           }
           return prevUser;
         });
+
       }
     } catch (error) {
       console.error("Error deleting project:", error);
@@ -106,7 +108,7 @@ const UserProjects = ({ username }: { username: string }) => {
   };
 
   const handleEdit = (projectId: number) => {
-    router.push(`/projects/edit/${projectId}`);
+    router.push(`/${username}/projects/edit/${projectId}`);
   };
 
   const openDeleteDialog = (projectId: number) => {
@@ -154,11 +156,14 @@ const UserProjects = ({ username }: { username: string }) => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel
-              onClick={() => setIsOpen(false)}
-              className="text-black"
+               onClick={(event) => {
+                event.stopPropagation(); // Prevent bubbling
+                setIsOpen(false);
+              }}
+              className="text-black"              
             >
               Cancel
-            </AlertDialogCancel>
+            </AlertDialogCancel >
             <AlertDialogAction onClick={deleteProject}>
               Yes, Delete
             </AlertDialogAction>

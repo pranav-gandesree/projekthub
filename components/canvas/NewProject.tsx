@@ -276,7 +276,7 @@ const NewProject = () => {
     title: z.string().min(2, "Title must be at least 2 characters long"),
     description: z.string().min(10, "Description must be at least 10 characters long"),
     githubLink: z.string().url("Must be a valid URL").min(10, "GitHub Link must be at least 10 characters long"),
-    liveLink: z.string().url("Must be a valid URL").min(10, "Live Link must be at least 10 characters long"),
+    liveLink: z.string().url("Must be a valid URL").min(10, "Live Link must be at least 10 characters long").optional(),
     isPublic: z.boolean().default(true),
     tags: z.string().min(1, "Must include at least one tag"),
     image: z.string().optional(),

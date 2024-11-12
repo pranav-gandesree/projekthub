@@ -1,55 +1,50 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 import prisma from "@/prisma/prisma";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
 
-  const { projectId } = req.query;
-  
-  // Ensure projectId is a single string
-  if (!projectId || Array.isArray(projectId)) {
-    return res.status(400).json({ error: "Invalid project ID" });
-  }
+export async function GET(req: Request, { params }: { params: { projectId: string } }) {
+  const projectId = params.projectId;
 
-  // Convert projectId to number
   const id = parseInt(projectId, 10);
-  
-  // Validate if id is a valid number
   if (isNaN(id)) {
-    return res.status(400).json({ error: "Project ID must be a number" });
+    return NextResponse.json({ error: "Project ID must be a number" }, { status: 400 });
   }
 
-  if (req.method === "GET") {
-    try {
-      const project = await prisma.project.findUnique({
-        where: { id },
-      });
+  try {
+    const project = await prisma.project.findUnique({
+      where: { id },
+    });
 
-      if (!project) {
-        return res.status(404).json({ error: "Project not found" });
-      }
-
-      res.status(200).json(project);
-    } catch (error) {
-      console.error("Error fetching project:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    if (!project) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
-  } else if (req.method === "PUT") {
-    try {
-      const updatedProject = await prisma.project.update({
-        where: { id },
-        data: req.body,
-      });
 
-      res.status(200).json(updatedProject);
-    } catch (error) {
-      console.error("Error updating project:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  } else {
-    res.setHeader("Allow", ["GET", "PUT"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    return NextResponse.json(project, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching project:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
+
+
+export async function PUT(req: Request, { params }: { params: { projectId: string } }) {
+  const projectId = params.projectId;
+  const id = parseInt(projectId, 10);
+
+  if (isNaN(id)) {
+    return NextResponse.json({ error: "Project ID must be a number" }, { status: 400 });
+  }
+
+  try {
+    const data = await req.json();
+    const updatedProject = await prisma.project.update({
+      where: { id },
+      data,
+    });
+
+    return NextResponse.json(updatedProject, { status: 200 });
+  } catch (error) {
+    console.error("Error updating project:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
