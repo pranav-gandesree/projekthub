@@ -27,6 +27,8 @@ import { Label } from "@/components/ui/label";
 import axios from "axios";
 import Loader from "../Loader";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast"
+import MarkdownEditor from "./Markdown";
 
 interface Project {
   id: number;
@@ -63,6 +65,8 @@ export default function UserProfile({ username }: { username: string }) {
   const [editedUser, setEditedUser] = useState<UserDetails | null>(null);
   const router = useRouter();
 
+  const { toast } = useToast();
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -71,7 +75,8 @@ export default function UserProfile({ username }: { username: string }) {
           throw new Error("Failed to fetch user data");
         }
         const userData = await response.json();
-        console.log(userData);
+        // console.log(userData);
+
         setUser(userData);
         setEditedUser(userData);
       } catch (error) {
@@ -103,9 +108,17 @@ export default function UserProfile({ username }: { username: string }) {
           userId,
         });
         if (response.status === 201) {
+          toast({
+            title: "Success",
+            description: "User details updated successfully!",
+          });
           setUser(editedUser);
           setIsEditing(false);
         } else {
+          toast({
+            title: "Sorryy",
+            description: "Something is wrong, please try again!",
+          });
           setError("Failed to update user data");
         }
       } catch (error) {
@@ -289,7 +302,15 @@ export default function UserProfile({ username }: { username: string }) {
 
         {/* Projects */}
 
+
+
+
         <div className="w-full lg:w-3/4 order-2 lg:order-2">
+        
+        <MarkdownEditor/>
+        <div>
+
+
           <h2 className="text-2xl font-bold mb-4 text-white">Projects</h2>
           {user.projects && user.projects.length > 0 ? (
             <>
@@ -377,6 +398,10 @@ export default function UserProfile({ username }: { username: string }) {
             </div>
           )}
         </div>
+
+        </div>
+
+   
       </div>
     </div>
   );

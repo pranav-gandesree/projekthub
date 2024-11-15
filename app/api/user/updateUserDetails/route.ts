@@ -9,6 +9,7 @@ const UserDetailsSchema = z.object({
     github: z.string().optional(),  
     portfolio: z.string().optional(),
     bio: z.string().optional(), 
+    markdownData: z.string().optional()
 });
 
 export async function POST(req: NextRequest) {

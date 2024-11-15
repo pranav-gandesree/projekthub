@@ -37,6 +37,7 @@ model UserDetails {
   github       String?  // Optional GitHub link
   portfolio    String?  // Optional portfolio link
   bio          String?  // Optional user bio
+  markdownData String? 
 }
 
 
