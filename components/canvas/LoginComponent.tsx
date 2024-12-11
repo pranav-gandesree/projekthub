@@ -3,7 +3,6 @@ import { Code2, Users } from "lucide-react";
 export function LoginComponent() {
   return (
     <div className="relative w-full max-w-xl z-10">
-      {/* Decorative background blur */}
       <div className="absolute -top-20 -left-20 w-72 h-72 bg-purple-400/20 rounded-full blur-3xl"></div>
       
       <div className="relative space-y-8 p-8">

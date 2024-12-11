@@ -10,7 +10,6 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { Badge } from '@/components/ui/badge'
 import Image from 'next/image'
-// import { Pagination } from "@/components/ui/pagination"; 
 
 interface User {
   id: number
@@ -204,9 +203,7 @@ export default function ProjectGallery() {
                       <Link href={`/${project.createdBy.name}`} className="text-sm text-purple-400 hover:text-purple-300 transition-colors">
                         @{project.createdBy.name}
                       </Link>
-                      {/* <Badge variant="secondary" className="bg-purple-500/20 text-purple-300">
-                        {project.public ? 'Public' : 'Private'}
-                      </Badge> */}
+            
                     </div>
                     <CardTitle className="text-2xl font-bold mb-3 text-white">{project.title}</CardTitle>
                     <p className="text-gray-300 mb-4 line-clamp-3">{project.description}</p>
@@ -265,8 +262,6 @@ export default function ProjectGallery() {
     </Button>
   </div>
 )}
-
-
 
     </div>
   )

@@ -305,9 +305,6 @@ export default function UserProfile({ username }: { username: string }) {
 
         {/* Projects */}
 
-
-
-
         <div className="w-full lg:w-3/4 order-2 lg:order-2">
         
         <MarkdownEditor/>

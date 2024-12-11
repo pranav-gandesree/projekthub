@@ -1,7 +1,5 @@
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   CodeIcon,
   ShareIcon,
@@ -23,14 +21,12 @@ export default async function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen text-white">
-      
       <div className="fixed inset-0 z-0">
         <div className="relative h-full w-full bg-slate-950">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px]"></div>
         </div>
       </div>
 
-   
       <header className="relative z-10 px-4 p-4 lg:px-6 h-14 flex items-center border-b border-gray-800">
         <Link className="flex items-center" href="/">
           <CodeIcon className="h-6 w-6 text-purple-400" />
@@ -48,9 +44,7 @@ export default async function LandingPage() {
         </nav>
       </header>
 
-     
       <main className="flex-1 relative z-10">
-        
         <section className="w-full py-12 md:py-24 lg:py-32  px-4 md:px-6">
           <div className="container mx-auto text-center">
             <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl text-purple-400">
@@ -79,7 +73,6 @@ export default async function LandingPage() {
           </div>
         </section>
 
- 
         <section
           id="features"
           className="w-full py-12 md:py-24 lg:py-32 bg-gray-900/50"
@@ -89,7 +82,6 @@ export default async function LandingPage() {
               Key Features
             </h2>
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-         
               <div className="flex flex-col items-center text-center">
                 <div className="p-4 bg-purple-600 rounded-full shadow-lg">
                   <CodeIcon className="h-10 w-10 text-white" />
@@ -102,7 +94,7 @@ export default async function LandingPage() {
                   descriptions and tags.
                 </p>
               </div>
-              
+
               <div className="flex flex-col items-center text-center">
                 <div className="p-4 bg-purple-600 rounded-full shadow-lg">
                   <ShareIcon className="h-10 w-10 text-white" />
@@ -115,7 +107,7 @@ export default async function LandingPage() {
                   potential employers or collaborators.
                 </p>
               </div>
-             
+
               <div className="flex flex-col items-center text-center">
                 <div className="p-4 bg-purple-600 rounded-full shadow-lg">
                   <UserIcon className="h-10 w-10 text-white" />
@@ -138,7 +130,6 @@ export default async function LandingPage() {
               How It Works
             </h2>
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-        
               <div className="flex flex-col items-center text-center">
                 <div className="flex items-center justify-center w-16 h-16 rounded-full bg-purple-600 text-white text-2xl font-bold shadow-lg">
                   1
@@ -150,7 +141,7 @@ export default async function LandingPage() {
                   Create your account and set up your developer profile.
                 </p>
               </div>
-          
+
               <div className="flex flex-col items-center text-center">
                 <div className="flex items-center justify-center w-16 h-16 rounded-full bg-purple-600 text-white text-2xl font-bold shadow-lg">
                   2
@@ -159,10 +150,11 @@ export default async function LandingPage() {
                   Add Projects
                 </h3>
                 <p className="mt-2 text-gray-300">
-                  Upload your projects with descriptions, screenshots, and links.
+                  Upload your projects with descriptions, screenshots, and
+                  links.
                 </p>
               </div>
-              
+
               <div className="flex flex-col items-center text-center">
                 <div className="flex items-center justify-center w-16 h-16 rounded-full bg-purple-600 text-white text-2xl font-bold shadow-lg">
                   3
@@ -178,58 +170,7 @@ export default async function LandingPage() {
             </div>
           </div>
         </section>
-
-   
       </main>
-
-      <footer className="relative z-10 flex flex-col sm:flex-row items-center justify-between py-6 w-full px-4 md:px-6 border-t border-gray-800">
-        <p className="text-sm text-gray-400">
-          © {new Date().getFullYear()} ProjectHub. All rights reserved.
-        </p>
-        <div className="flex items-center mt-4 sm:mt-0 space-x-4">
-          <Link
-            className="text-sm text-gray-400 hover:text-purple-400"
-            href="/terms"
-          >
-            Terms of Service
-          </Link>
-          <Link
-            className="text-sm text-gray-400 hover:text-purple-400"
-            href="/privacy"
-          >
-            Privacy Policy
-          </Link>
-        </div>
-        <div className="flex space-x-4 mt-4 sm:mt-0">
-          <a
-            href="https://github.com/pranav-gandesree"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-400 hover:text-purple-400"
-          >
-            <Github className="h-5 w-5" />
-            <span className="sr-only">GitHub</span>
-          </a>
-          <a
-            href="https://x.com/pranav8267"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-400 hover:text-purple-400"
-          >
-            <TwitterIcon className="h-5 w-5" />
-            <span className="sr-only">Twitter</span>
-          </a>
-          <a
-            href="https://linkedin.com/in/yourprofile"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-400 hover:text-purple-400"
-          >
-            <LinkedinIcon className="h-5 w-5" />
-            <span className="sr-only">LinkedIn</span>
-          </a>
-        </div>
-      </footer>
     </div>
   );
 }

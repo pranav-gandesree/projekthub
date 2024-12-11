@@ -70,19 +70,6 @@ export function SheetDemo() {
 
           </nav>
         </motion.div>
-
-        {/* <motion.div
-          className="fixed bottom-2 w-64 bg-gray-900 text-white shadow-lg m-4 border rounded-md hidden md:block"
-          initial="hidden"
-          animate="visible"
-          transition={{ type: 'spring', stiffness: 120 }}
-        >
-          <div className="p-2">
-            <p>{session?.user.name}</p>
-              
-           <p> {session?.user.email}</p>
-          </div>
-        </motion.div> */}
       </SheetContent>
     </Sheet>
   )

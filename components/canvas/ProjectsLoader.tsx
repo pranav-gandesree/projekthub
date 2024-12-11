@@ -1,5 +1,3 @@
-
-
 import React from 'react'
 import { Skeleton } from '../ui/skeleton' 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '../ui/card'

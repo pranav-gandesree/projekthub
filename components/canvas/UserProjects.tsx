@@ -66,7 +66,7 @@ const UserProjects = ({ username }: { username: string }) => {
           isPublic: project.public,
         }));
 
-        console.log( "mapped projects is ",mappedProjects);
+        // console.log( "mapped projects is ",mappedProjects);
         setUser({ ...userData, projects: mappedProjects });
       } catch (error) {
         setError("Error fetching user");
@@ -97,8 +97,8 @@ const UserProjects = ({ username }: { username: string }) => {
           }
           return prevUser;
         });
-
       }
+      router.refresh();
     } catch (error) {
       console.error("Error deleting project:", error);
       toast.error("Failed to delete project!");
@@ -158,8 +158,9 @@ const UserProjects = ({ username }: { username: string }) => {
           <AlertDialogFooter>
             <AlertDialogCancel
                onClick={(event) => {
-                event.stopPropagation(); // Prevent bubbling
+                event.stopPropagation(); 
                 setIsOpen(false);
+                router.refresh();
               }}
               className="text-black"              
             >
@@ -213,3 +214,31 @@ const UserProjects = ({ username }: { username: string }) => {
 };
 
 export default UserProjects;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

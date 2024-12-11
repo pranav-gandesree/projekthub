@@ -40,7 +40,7 @@ export default function PortfolioPage() {
       try {
         const response = await fetch('/api/portfolios');
         const data = await response.json();
-        console.log(data)
+        // console.log(data)
 
         if (Array.isArray(data.portfolios)) {
           setSubmissions(data.portfolios);
@@ -75,7 +75,7 @@ export default function PortfolioPage() {
 
         if (response.ok) {
           const result = await response.json();
-          console.log(result)
+          // console.log(result)
           setSubmissions([...submissions, result.newPortfolio]); 
           setGithubLink('');
           setPortfolioLink('');

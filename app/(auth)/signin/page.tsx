@@ -1,7 +1,5 @@
-
 // import { LoginComponent } from '@/components/canvas/LoginComponent';
 // import SignInForm from '@/components/form/SignInForm'
-
 
 // const SignInPage = () => {
 //   return (
@@ -23,20 +21,30 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { LoginComponent } from "@/components/canvas/LoginComponent";
 import SignInForm from "@/components/form/SignInForm";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 
-
-
 export default async function LoginPage() {
-
   const session = await getServerSession(authOptions);
 
   if (session) {
-    redirect('/home'); 
+    redirect("/home");
   }
 
   return (
@@ -46,7 +54,6 @@ export default async function LoginPage() {
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px]"></div>
         </div>
       </div>
-
 
       <div className="relative flex w-full">
         <div className="hidden lg:flex lg:w-1/2 lg:flex-col lg:items-center lg:justify-center p-8">

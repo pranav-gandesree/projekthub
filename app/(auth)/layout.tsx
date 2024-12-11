@@ -1,18 +1,18 @@
-
-import { FC, ReactNode } from "react"
+import AuthNavbar from "@/components/canvas/AuthNavbar";
+import { FC, ReactNode } from "react";
 
 interface AuthLayoutProps {
-    children: ReactNode
+  children: ReactNode;
 }
-const AuthLayout: FC<AuthLayoutProps> = ({children}) => {
+const AuthLayout: FC<AuthLayoutProps> = ({ children }) => {
   return (
     <>
-    
-    <div className=" p-6 rounded-md">   
-      {children}
-    </div>
+      <div className=" p-6 rounded-md">
+        <AuthNavbar />
+        {children}
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default AuthLayout
+export default AuthLayout;
