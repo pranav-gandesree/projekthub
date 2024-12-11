@@ -29,6 +29,7 @@ import Loader from "../Loader";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast"
 import MarkdownEditor from "./Markdown";
+import PageNotFound from "./PageNotFound";
 
 interface Project {
   id: number;
@@ -79,6 +80,7 @@ export default function UserProfile({ username }: { username: string }) {
 
         setUser(userData);
         setEditedUser(userData);
+        router.refresh();
       } catch (error) {
         setError("Error fetching user");
         console.error("Error fetching user:", error);
@@ -134,7 +136,8 @@ export default function UserProfile({ username }: { username: string }) {
   };
 
   if (error) {
-    return <div className="text-center text-red-500">{error}</div>;
+    // return <div className="text-center text-red-500">{error}</div>;
+    return <PageNotFound/>;
   }
 
   if (!user) {
@@ -332,9 +335,9 @@ export default function UserProfile({ username }: { username: string }) {
                           <CardTitle className="flex items-center justify-between text-white">
                             {project.title}
                             {project.public ? (
-                              <Badge variant="secondary">Public</Badge>
+                              <Badge >Public</Badge>
                             ) : (
-                              <Badge variant="outline" className="text-white">
+                              <Badge  className="text-white">
                                 <LockClosedIcon className="w-3 h-3 mr-1 text-white" />{" "}
                                 Private
                               </Badge>
@@ -346,7 +349,7 @@ export default function UserProfile({ username }: { username: string }) {
                         </CardHeader>
                         <CardFooter className="flex flex-col sm:flex-row justify-start gap-2">
                           <Button
-                            variant="default"
+                           
                             asChild
                             className="w-full sm:w-auto hover:bg-purple-500 border border-gray-400"
                           >

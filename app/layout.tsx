@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/toaster";
 import GradientBackground from "@/components/canvas/GradiantBackground";
+import ProgressBar from "@/components/canvas/ProgressBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,6 +32,7 @@ export default function RootLayout({
         <div className="relative z-10">
           <Providers>
             <main className="h-screen flex flex-col items-center ">
+              <ProgressBar/>
               {/* <Navbar/> */}
               {children}
             </main>

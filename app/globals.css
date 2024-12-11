@@ -1,4 +1,51 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+  
+@import 'nprogress/nprogress.css';
+
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@layer utilities {
+  .animate-fly-in-out {
+    animation: fly-in-out 3s ease-in-out infinite;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 1s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.5s ease-out;
+  }
+
+  .animate-spin-slow {
+    animation: spin 4s linear infinite;
+  }
+}
+
+
+
+#nprogress .bar {
+    background: #6366f1; 
+    height: 4px;
+  }
+  
+  #nprogress .peg {
+    box-shadow: 0 0 10px #6366f1, 0 0 5px #6366f1;
+  }
+  
+  #nprogress .spinner {
+    display: none; 
+  }
   

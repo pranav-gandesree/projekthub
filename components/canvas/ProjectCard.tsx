@@ -98,12 +98,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
    >
      ✏️ <span>Edit</span>
    </DropdownMenuItem>
-   {/* <DropdownMenuItem
+   <DropdownMenuItem
      onClick={onDelete}
      className="flex items-center space-x-2 px-3 py-2 hover:bg-red-600 rounded cursor-pointer"
    >
      🗑️ <span>Delete</span>
-   </DropdownMenuItem> */}
+   </DropdownMenuItem>
  </DropdownMenuContent>
 </DropdownMenu>
              }

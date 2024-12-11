@@ -18,6 +18,7 @@ import { toast, Toaster } from "sonner";
 import { Skeleton } from "../ui/skeleton";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import PageNotFound from "./PageNotFound";
 
 interface Tag {
   id: number;
@@ -117,7 +118,7 @@ const UserProjects = ({ username }: { username: string }) => {
   };
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <PageNotFound/>;
   }
 
 
