@@ -12,6 +12,7 @@ export async function POST(request: Request) {
     image,
     liveLink,
     githubLink,
+    category,
     public: isPublic,
     userId,
     tags,
@@ -24,6 +25,7 @@ export async function POST(request: Request) {
     image,
     liveLink,
     githubLink,
+    category,
     isPublic,
     userId,
     tags,
@@ -31,16 +33,6 @@ export async function POST(request: Request) {
   );
 
   try {
-    const createdTags = await Promise.all(
-      tags.map(async (tag: string) => {
-        return await prisma.tag.upsert({
-          where: { name: tag },
-          update: {},
-          create: { name: tag },
-        });
-      })
-    );
-
     const newProject = await prisma.project.create({
       data: {
         title,
@@ -48,11 +40,10 @@ export async function POST(request: Request) {
         image,
         liveLink,
         githubLink,
+        category,
         public: isPublic,
         userId,
-        tags: {
-          connect: createdTags.map((tag) => ({ id: tag.id })),
-        },
+        tags,
       },
     });
     console.log(newProject);
@@ -70,7 +61,6 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    
 
     let publicProjects = null;
 
@@ -81,7 +71,6 @@ export async function GET() {
         },
         include: {
           createdBy: true, 
-          tags: true,
         },
       });
 

@@ -38,12 +38,7 @@ export async function GET(request: Request, { params }: { params: { username: st
               githubLink: true,
               liveLink: true,
               public: true,
-              tags: { 
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
+              tags: true
             },
           },
         },

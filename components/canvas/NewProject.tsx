@@ -22,11 +22,13 @@ import { useToast } from "@/components/ui/use-toast"
 import { useRouter } from "next/navigation";
 
 import { CldUploadWidget } from 'next-cloudinary';
+import { useState } from "react";
 
 const NewProject = () => {
   const { data: session } = useSession();
   const { toast } = useToast();
   const router = useRouter();
+  const [isSubmitClicked, setIsSubmitClicked] = useState(false); 
 
   const formSchema = z.object({
     title: z.string().min(2, "Title must be at least 2 characters long"),
@@ -34,8 +36,9 @@ const NewProject = () => {
     githubLink: z.string().url("Must be a valid URL").min(10, "GitHub Link must be at least 10 characters long"),
     liveLink: z.string().url("Must be a valid URL").min(10, "Live Link must be at least 10 characters long").optional(),
     isPublic: z.boolean().default(true),
-    tags: z.string().min(1, "Must include at least one tag"),
+    tags: z.array(z.string()).min(1, "Must include at least one tag"),
     image: z.string().optional(),
+    category: z.string().nonempty("You must select a category"),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -47,8 +50,9 @@ const NewProject = () => {
       githubLink: "",
       liveLink: "",
       isPublic: true,
-      tags: "",
+      tags: [],
       image: "",
+      category: "",
     },
   });
 
@@ -61,10 +65,9 @@ const NewProject = () => {
       return;
     }
 
-    const tagsArray = data.tags.split(",").map(tag => tag.trim());
-
+    setIsSubmitClicked(true); 
     try {
-      await axios.post("/api/projects", { ...data, userId, username, tags: tagsArray });
+      await axios.post("/api/projects", { ...data, userId, username });
       toast({
         title: "Hurrayyy",
         description: "Project created successfully!",
@@ -85,7 +88,16 @@ const NewProject = () => {
   };
 
   const handleUploadSuccess = (result: any) => {
-    form.setValue("image", result?.info.secure_url);
+    if (isSubmitClicked) {
+      form.setValue("image", result?.info.secure_url);
+    } else {
+      // Do not update the form with image URL if submit is not clicked
+      toast({
+        title: "Image upload skipped",
+        description: "The image will only be saved after submission.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -166,6 +178,33 @@ const NewProject = () => {
               />
             </div>
 
+
+            <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-slate-200">Category</FormLabel>
+                    <FormControl className="bg-transparent">
+                      <select
+                        {...field}
+                        className="w-full border-gray-400 rounded-lg bg-transparent text-white"
+                      >
+                        <option value="" disabled selected hidden >
+                          Select a category
+                        </option>
+                        <option value="web2">Web2</option>
+                        <option value="blockchain">Blockchain</option>
+                        <option value="aiml">AI/ML</option>
+                        <option value="app-dev">App Development</option>
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+
             <FormField
               control={form.control}
               name="tags"
@@ -177,6 +216,10 @@ const NewProject = () => {
                       placeholder="Enter tags separated by commas"
                       {...field}
                       className="border-gray-400 rounded-lg bg-transparent"
+                      onChange={(e) => {
+                        // Split input by commas and update the field value with the resulting array
+                        field.onChange(e.target.value.split(',').map((tag) => tag.trim()));
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

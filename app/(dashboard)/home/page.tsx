@@ -31,7 +31,7 @@ interface Project {
   public: boolean;
   createdBy: User;
   createdAt: string;
-  tags: Tag[];
+  tags: string[];
 }
 
 export default function ProjectGallery() {
@@ -208,10 +208,10 @@ export default function ProjectGallery() {
                     <CardTitle className="text-2xl font-bold mb-3 text-white">{project.title}</CardTitle>
                     <p className="text-gray-300 mb-4 line-clamp-3">{project.description}</p>
                     <div className="flex flex-wrap gap-2 mt-4">
-                      {project.tags.map((tag) => (
-                        <Badge key={tag.id} variant="outline" className="bg-gray-700/50 text-gray-300 border-gray-600">
+                      {project.tags.map((tag, index) => (
+                        <Badge key={index} variant="outline" className="bg-gray-700/50 text-gray-300 border-gray-600">
                           <TagIcon className="w-3 h-3 mr-1" />
-                          {tag.name}
+                          {tag}
                         </Badge>
                       ))}
                     </div>

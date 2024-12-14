@@ -49,3 +49,8 @@
     display: none; 
   }
   
+
+  select option {
+    background-color: rgb(41, 40, 40) !important;
+    color: white !important;
+  }

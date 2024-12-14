@@ -66,7 +66,7 @@ const UserProjects = ({ username }: { username: string }) => {
           isPublic: project.public,
         }));
 
-        // console.log( "mapped projects is ",mappedProjects);
+        console.log( "mapped projects is ",mappedProjects);
         setUser({ ...userData, projects: mappedProjects });
       } catch (error) {
         setError("Error fetching user");
