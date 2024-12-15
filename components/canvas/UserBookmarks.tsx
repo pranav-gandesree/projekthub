@@ -1,12 +1,15 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardContent, CardFooter, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { GithubIcon, ExternalLinkIcon } from 'lucide-react';
+import { GithubIcon, ExternalLinkIcon, TagIcon } from 'lucide-react';
 import Bookmark from './Bookmark';
 import Image from 'next/image';
+import NoBookmark from '../bookmark/NoBookmark';
+import Link from 'next/link';
+import { Badge } from '../ui/badge';
 
 const UserBookmarks = ({ username }: { username: string }) => {
   const [bookmarks, setBookmarks] = useState<any[]>([]);
@@ -25,9 +28,10 @@ const UserBookmarks = ({ username }: { username: string }) => {
         }
         const data = await response.json();
         setUser(data.username);
+        console.log(data)
         setBookmarks(data.bookmarks);
         setUserBookmarks(new Set(data.bookmarks.map((b: any) => b.id)));
-        localStorage.setItem("bookmarks", JSON.stringify(data.bookmarks));
+        // localStorage.setItem("bookmarks", JSON.stringify(data.bookmarks));
       } catch (error) {
         setError('Failed to fetch bookmarks');
       } finally {
@@ -69,7 +73,7 @@ const UserBookmarks = ({ username }: { username: string }) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {bookmarks.length > 0 ? (
+        {/* {bookmarks.length > 0 ? (
           bookmarks.map((bookmark) => (
             <motion.div
               key={bookmark.id}
@@ -82,7 +86,7 @@ const UserBookmarks = ({ username }: { username: string }) => {
                   <div className="flex justify-between items-start">
                     <p className="text-md text-gray-500 mt-1">
                       <span className="font-medium text-purple-500">
-                       {bookmark.createdBy.name} <span className='text-white'>created this project</span> 
+                       {username} <span className='text-white'>created this project</span> 
                       </span>
                     </p>
                      <Bookmark
@@ -94,28 +98,33 @@ const UserBookmarks = ({ username }: { username: string }) => {
                   </div>
                 </CardHeader>
                 <CardContent className="flex-grow">
-                  {bookmark.image && (
-                    <div className="relative h-48 mb-4 overflow-hidden rounded-md">
-                      <Image
-                        src={bookmark.image}
-                        alt={`${bookmark.title} thumbnail`}
-                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-                      />
-                    </div>
-                  )}
-                  <h3 className="text-2xl font-semibold text-slate-100 mb-2">{bookmark.title}</h3>
-                  <p className="text-gray-600 mb-4">{bookmark.description}</p>
+                  {bookmark.projectImage ? (
+                                        <div className="relative h-48 overflow-hidden">
+                                          <Image
+                                            src={bookmark.projectImage}
+                                            alt={`${bookmark.title} thumbnail`}
+                                            className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                                            width={250}
+                                            height={200}
+                                          />
+                                          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                                        </div>
+                                      ) : (
+                                        <div className="h-48 bg-gradient-to-br from-purple-600 to-blue-600"></div>
+                                      )}
+                  <h3 className="text-2xl font-semibold text-slate-100 mb-2">{bookmark.projectName}</h3>
+                  <p className="text-gray-600 mb-4">{bookmark.projectDescription}</p>
                 </CardContent>
                 <CardFooter className="flex justify-start gap-4">
                   <Button variant="outline" asChild>
-                    <a href={bookmark.githubLink} target="_blank" rel="noopener noreferrer">
+                    <a href={bookmark.projectGithubLink} target="_blank" rel="noopener noreferrer">
                       <GithubIcon className="mr-2 h-4 w-4" />
                       GitHub
                     </a>
                   </Button>
-                  {bookmark.liveLink && (
+                  {bookmark.projectLiveLink && (
                     <Button variant="outline" asChild>
-                      <a href={bookmark.liveLink} target="_blank" rel="noopener noreferrer">
+                      <a href={bookmark.projectLiveLink} target="_blank" rel="noopener noreferrer">
                         <ExternalLinkIcon className="mr-2 h-4 w-4" />
                         Live Demo
                       </a>
@@ -126,8 +135,92 @@ const UserBookmarks = ({ username }: { username: string }) => {
             </motion.div>
           ))
         ) : (
-          <p className="col-span-full text-center text-gray-500 text-lg">No bookmarks found.</p>
-        )}
+          <NoBookmark/>
+        )} */}
+
+
+
+
+
+{bookmarks.length > 0 ? (
+            bookmarks.map((bookmark) => (
+              <motion.div
+                key={bookmark.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Card className="overflow-hidden h-full flex flex-col bg-gray-800/50 border-gray-700 hover:border-purple-500 transition-all duration-300">
+                  <CardHeader className="relative p-0">
+                    {bookmark.projectImage ? (
+                      <div className="relative h-48 overflow-hidden">
+                        <Image
+                          src={bookmark.projectImage}
+                          alt={`${bookmark.title} thumbnail`}
+                          className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                          width={200}
+                          height={200}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                      </div>
+                    ) : (
+                      <div className="h-48 bg-gradient-to-br from-purple-600 to-blue-600"></div>
+                    )}
+     
+                  </CardHeader>
+                  <CardContent className="flex-grow p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <Link href={`/${username}`} className="text-sm text-purple-400 hover:text-purple-300 transition-colors">
+                        @{username}
+                      </Link>
+
+                      <Bookmark
+                                      projectId={bookmark.id}
+                                      userId={username}
+                                      isBookmarked={userBookmarks.has(bookmark.id)}
+                                      onToggle={handleBookmarkToggle}
+                      />
+            
+                    </div>
+                    <CardTitle className="text-2xl font-bold mb-3 text-white">{bookmark.title}</CardTitle>
+                    <p className="text-gray-300 mb-4 line-clamp-3">{bookmark.projectDescription}</p>
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {bookmark.projectTags.map((tag: any, index: any) => (
+                        <Badge key={index} variant="outline" className="bg-gray-700/50 text-gray-300 border-gray-600">
+                          <TagIcon className="w-3 h-3 mr-1" />
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-between gap-4 p-6 bg-gray-800/30">
+                    <Button variant="default" asChild className="flex-1 bg-purple-600 hover:bg-purple-700">
+                      <a href={bookmark.projectGithubLink} target="_blank" rel="noopener noreferrer">
+                        <GithubIcon className="mr-2 h-4 w-4" />
+                        GitHub
+                      </a>
+                    </Button>
+                    {bookmark.projectLiveLink && (
+                      <Button variant="outline" asChild className="flex-1 border-purple-500 text-slate-900">
+                        <a href={bookmark.projectLiveLink} target="_blank" rel="noopener noreferrer">
+                          <ExternalLinkIcon className="mr-2 h-4 w-4" />
+                          Live Demo
+                        </a>
+                      </Button>
+                    )}
+                  </CardFooter>
+                </Card>
+              </motion.div>
+            ))
+          ) : (
+            <NoBookmark/>
+          )}
+
+
+
+
+
       </motion.div>
     </div>
   );

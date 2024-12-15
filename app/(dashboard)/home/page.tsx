@@ -10,15 +10,12 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { Badge } from '@/components/ui/badge'
 import Image from 'next/image'
+import BookmarkButton from '@/components/bookmark/BookmarkButton'
+import { Bookmark } from '@prisma/client'
 
 interface User {
   id: number
   name: string
-}
-
-interface Tag {
-  id: number;
-  name: string;
 }
 
 interface Project {
@@ -32,13 +29,13 @@ interface Project {
   createdBy: User;
   createdAt: string;
   tags: string[];
+  bookmark: Bookmark | null;
 }
 
 export default function ProjectGallery() {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
-  // const [bookmarks, setBookmarks] = useState<Set<number>>(new Set())
   const { data: session } = useSession();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,65 +64,12 @@ export default function ProjectGallery() {
       }
     }
 
-  //   const fetchBookmarks = async () => {
-  //     if (session?.user.id) {
-  //       try {
-  //         const response = await fetch(`/api/users/${session.user.id}/bookmarks`)
-  //         if (!response.ok) {
-  //           throw new Error('Failed to fetch bookmarks')
-  //         }
-  //         const data = await response.json()
-  //         setBookmarks(new Set(data.bookmarks))
-  //         localStorage.setItem('bookmarks', JSON.stringify(data.bookmarks))
-  //       } catch (error) {
-  //         console.error('Failed to fetch bookmarks', error)
-  //       }
-  //     } else {
-  //       console.warn('Session or user ID is not available');
-  //     }
-      
-  //   }
-  //   fetchBookmarks()
 
     fetchProjects()
   }, [session])
 
 
   
-
-  // const handleBookmark = async (projectId: number, action: 'add' | 'remove') => {
-  //   try {
-  //     const userId = session?.user.id;
-  //     const response = await fetch(`/api/users/${userId}/bookmarks/${action}`, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({
-  //         userId,
-  //         projectId,
-  //       }),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error('Failed to update bookmark');
-  //     }
-
-  //     setBookmarks(prev => {
-  //       const newBookmarks = new Set(prev);
-  //       if (action === 'add') {
-  //         newBookmarks.add(projectId);
-  //       } else {
-  //         newBookmarks.delete(projectId);
-  //       }
-  //       localStorage.setItem('bookmarks', JSON.stringify(Array.from(newBookmarks)));
-  //       return newBookmarks;
-  //     });
-  //   } catch (error) {
-  //     console.error('Error handling bookmark:', error);
-  //   }
-  // }
-
 
   if (loading) {
     return (
@@ -203,6 +147,14 @@ export default function ProjectGallery() {
                       <Link href={`/${project.createdBy.name}`} className="text-sm text-purple-400 hover:text-purple-300 transition-colors">
                         @{project.createdBy.name}
                       </Link>
+
+                      <BookmarkButton
+                        bookmark={project.bookmark}
+                        projectId={project.id}
+                        size={24}
+                        align="end"
+                        side="top"
+                      />
             
                     </div>
                     <CardTitle className="text-2xl font-bold mb-3 text-white">{project.title}</CardTitle>
