@@ -20,20 +20,34 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* google analytics */}
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
+        ></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
+      </head>
       <body className={`${inter.className} text-white`}>
       <div className="fixed inset-0 z-[-1]">
           <GradientBackground />
         </div>
-        {/* <div className="fixed inset-0 z-0">
-          <div className="relative h-full w-full bg-slate-950">
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px]"></div>
-          </div>
-        </div> */}       
+      
         <div className="relative z-10">
           <Providers>
             <main className="h-screen flex flex-col items-center ">
               <ProgressBar/>
-              {/* <Navbar/> */}
               {children}
             </main>
             <Toaster />

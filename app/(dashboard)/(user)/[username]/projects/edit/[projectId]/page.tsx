@@ -23,10 +23,7 @@ import { useEffect, useState } from "react";
 import { CldUploadWidget } from 'next-cloudinary';
 import Image from "next/image";
 
-interface Tag {
-  id: number;
-  name: string;
-}
+
 
 interface Project {
   id: number;
@@ -34,10 +31,11 @@ interface Project {
   description: string;
   githubLink: string;
   liveLink: string;
+  category: string;
   public: boolean;
   image?: string;
   userId: string;
-  tags: Tag[];
+  tags: string[];
 }
 
 const EditPage = ({ params }: { params: { projectId: string } }) => {
@@ -52,9 +50,9 @@ const EditPage = ({ params }: { params: { projectId: string } }) => {
     description: z.string().min(10, "Description must be at least 10 characters long"),
     githubLink: z.string().url("Must be a valid URL").min(10, "GitHub Link must be at least 10 characters long"),
     liveLink: z.string().url("Must be a valid URL").min(10, "Live Link must be at least 10 characters long").optional(),
+    category: z.string().nonempty("You must select a category"),
     public: z.boolean().default(true),
-    tags: z.string().min(1, "Must include at least one tag"),
-    // tags: projectData?.tags?.map(tag => tag.name).join(", ") || "",
+    tags: z.array(z.string()).min(1, "Must include at least one tag"),
     image: z.string().optional(),
   });
 
@@ -79,7 +77,7 @@ const EditPage = ({ params }: { params: { projectId: string } }) => {
       githubLink: "",
       liveLink: "",
       public: true,
-      tags: "",
+      tags: [],
       image: "",
     },
   });
@@ -92,7 +90,7 @@ const EditPage = ({ params }: { params: { projectId: string } }) => {
         githubLink: projectData.githubLink || "",
         liveLink: projectData.liveLink || "",
         public: projectData.public || true,
-        tags: projectData.tags ? projectData.tags.map(tag => tag.name).join(", ") : "",
+        tags: projectData.tags || [],
         image: projectData.image || "",
       });
     }
@@ -105,9 +103,8 @@ const EditPage = ({ params }: { params: { projectId: string } }) => {
       return;
     }
 
-    const tagsArray = data.tags.split(",").map(tag => tag.trim());
     try {
-      await axios.put(`/api/projects/${projectId}`, { ...data, userId, tags: tagsArray });
+      await axios.put(`/api/projects/${projectId}`, { ...data, userId});
       toast({
         title: "Success!",
         description: "Project updated successfully!",
@@ -214,7 +211,7 @@ const EditPage = ({ params }: { params: { projectId: string } }) => {
                   <FormControl>
                     <Input
                       {...field}
-                      onChange={e => form.setValue("tags", e.target.value)}
+                      onChange={e => form.setValue("tags", e.target.value.split(",").map(tag => tag.trim()))}
                       className="border-gray-400 rounded-lg bg-transparent"
                     />
                   </FormControl>

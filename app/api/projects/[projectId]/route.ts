@@ -13,9 +13,6 @@ export async function GET(req: Request, { params }: { params: { projectId: strin
   try {
     const project = await prisma.project.findUnique({
       where: { id },
-      include: {
-        tags: true,
-      },
     });
 
     if (!project) {

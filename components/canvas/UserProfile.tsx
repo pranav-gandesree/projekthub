@@ -29,7 +29,7 @@ import Loader from "../Loader";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast"
 import MarkdownEditor from "./Markdown";
-import PageNotFound from "./PageNotFound";
+// import PageNotFound from "./PageNotFound";
 
 interface Project {
   id: number;
@@ -116,6 +116,7 @@ export default function UserProfile({ username }: { username: string }) {
           });
           setUser(editedUser);
           setIsEditing(false);
+          router.refresh();
         } else {
           toast({
             title: "Sorryy",
@@ -136,8 +137,8 @@ export default function UserProfile({ username }: { username: string }) {
   };
 
   if (error) {
-    // return <div className="text-center text-red-500">{error}</div>;
-    return <PageNotFound/>;
+    return <div className="text-center text-red-500">{error}</div>;
+    // return <PageNotFound/>;
   }
 
   if (!user) {
@@ -161,7 +162,7 @@ export default function UserProfile({ username }: { username: string }) {
                 <div className="absolute inset-0 h-32 bg-gradient-to-r from-purple-500 to-pink-500"></div>
                 <Avatar className="w-32 h-32 mx-auto mb-4 border-4 border-white relative z-10 mt-16">
                   <AvatarImage
-                    src={`https://avatars.githubusercontent.com/${username}`}
+                    // src={`https://avatars.githubusercontent.com/${username}`}
                     alt={user.name}
                   />
                 </Avatar>
@@ -170,56 +171,57 @@ export default function UserProfile({ username }: { username: string }) {
                 {isEditing ? (
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="name">Name</Label>
+                      <Label htmlFor="name" className="text-white">Name</Label>
                       <Input
                         id="name"
                         name="name"
                         value={editedUser?.name}
                         onChange={handleInputChange}
-                        className="mt-1"
+                        className="mt-1 bg-transparent text-white"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="bio">Bio</Label>
+                      <Label htmlFor="bio" className="text-white">Bio</Label>
                       <Textarea
                         id="bio"
                         name="bio"
                         value={editedUser?.bio || ""}
                         onChange={handleInputChange}
-                        className="mt-1"
+                        className="mt-1 bg-transparent text-white"
                         rows={3}
+                        placeholder="Enter bio"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="twitter">Twitter</Label>
+                      <Label htmlFor="twitter" className="text-white">Twitter</Label>
                       <Input
                         id="twitter"
                         name="twitter"
                         value={editedUser?.twitter || ""}
                         onChange={handleInputChange}
-                        className="mt-1"
+                        className="mt-1 bg-transparent text-white"
                         placeholder="Twitter username"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="github">GitHub</Label>
+                      <Label htmlFor="github" className="text-white">GitHub</Label>
                       <Input
                         id="github"
                         name="github"
                         value={editedUser?.github || ""}
                         onChange={handleInputChange}
-                        className="mt-1"
-                        placeholder="GitHub username"
+                        className="mt-1 bg-transparent text-white"
+                        placeholder="GitHub URL"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="portfolio">Portfolio</Label>
+                      <Label htmlFor="portfolio" className="text-white">Portfolio</Label>
                       <Input
                         id="portfolio"
                         name="portfolio"
                         value={editedUser?.portfolio || ""}
                         onChange={handleInputChange}
-                        className="mt-1"
+                        className="mt-1 bg-transparent text-white"
                         placeholder="Portfolio URL"
                       />
                     </div>
@@ -255,18 +257,21 @@ export default function UserProfile({ username }: { username: string }) {
                           <span>{user?.userDetails?.github}</span>
                         </a>
                       )}
+                    
                       {user.userDetails?.portfolio && (
-                        <a
-                          href={user.userDetails.portfolio}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-green-400 hover:text-green-300 flex items-center space-x-4"
-                        >
-                          <GlobeIcon className="w-6 h-6" />
-                          <span>{user?.userDetails?.portfolio}</span>
-                        </a>
-                      )}
-                    </div>
+                          <a
+                            href={user.userDetails.portfolio}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-green-400 hover:text-green-300 flex flex-col items-start space-y-2"
+                          >
+                            <div className="flex items-center space-x-4">
+                              <GlobeIcon className="w-6 h-6" />
+                                <span className="break-all">{user?.userDetails?.portfolio}</span>
+                            </div>
+                          </a>
+                        )}
+                     </div>
                   </div>
                 )}
               </CardContent>

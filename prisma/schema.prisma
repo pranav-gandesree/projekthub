@@ -21,22 +21,19 @@ model User {
   accounts      Account[]
   sessions      Session[]
   projects      Project[] @relation("UserProjects")
-  bookmarks     Project[] @relation("UserBookmarks")
+  bookmarks     Bookmark[] 
   userDetails   UserDetails?
-
-  @@map("users")
-  UserProjectBookmarks UserProjectBookmarks[]
-  Portfolios Portfolios[]
+  Portfolios    Portfolios[]
 }
 
 
 model UserDetails {
   userId       String   @id
   user         User     @relation(fields: [userId], references: [id])
-  twitter      String?  // Optional Twitter link
-  github       String?  // Optional GitHub link
-  portfolio    String?  // Optional portfolio link
-  bio          String?  // Optional user bio
+  twitter      String?  
+  github       String?  
+  portfolio    String?  
+  bio          String?  
   markdownData String? 
 }
 
@@ -48,32 +45,26 @@ model Project {
   image       String?
   liveLink    String?
   githubLink  String
+  category    String
   public      Boolean  @default(true)
   createdBy   User     @relation("UserProjects", fields: [userId], references: [id])
   userId      String
-  tags        Tag[]    @relation("ProjectTags")
-  bookmarkedBy User[]  @relation("UserBookmarks")
+  tags        String[]  
+  bookmarks    Bookmark[]
 
-  @@map("projects")
-  UserProjectBookmarks UserProjectBookmarks[]
 }
 
-model Tag {
-  id       Int       @id @default(autoincrement())
-  name     String    @unique
-  projects Project[] @relation("ProjectTags")
-
-  @@map("tags")
-}
-
-model UserProjectBookmarks {
+model Bookmark {
+  id        Int      @id @default(autoincrement())
   userId    String
   projectId Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   project   Project  @relation(fields: [projectId], references: [id])
+  createdAt DateTime @default(now())
 
-  @@id([userId, projectId])
-  @@map("user_project_bookmarks")
+  @@unique([userId, projectId]) // ensures a user can bookmark a project only once
+  @@index([userId]) // Improves query performance on user bookmarks
+  @@index([projectId]) // Improves query performance on project bookmarks
 }
 
 model Portfolios {

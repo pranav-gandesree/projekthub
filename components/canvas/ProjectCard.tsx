@@ -37,7 +37,7 @@ interface ProjectCardProps {
   description: string;
   githubLink: string;
   liveLink: string;
-  tags?: Tag[];
+  tags?: string[];
   isPublic: boolean;
   image?: string;
   isAuthenticated: boolean;
@@ -121,7 +121,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           </div>
         </div>
 
-        <CardHeader className="relative z-10 -mt-12 pb-0">
+        <CardHeader className="relative z-10 pb-0">
           <div className="flex justify-between items-center">
             <CardTitle className="text-2xl font-bold text-white  truncate">
               {title}
@@ -139,19 +139,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         </CardHeader>
 
         <CardContent className="pt-4">
-          <div className="flex flex-wrap gap-2 mt-2">
+          <div className="flex flex-wrap gap-2 mt-2 justify-start">
             <AnimatePresence>
-              {tags.map((tag) => (
-                <motion.span
-                  key={tag.id}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  className="bg-gray-700/50 text-gray-200 px-2 py-1 rounded-full text-xs font-medium"
-                >
-                  {tag.name}
-                </motion.span>
-              ))}
+            {tags.map((tag, index) => (
+                    <motion.span
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      className="bg-gray-700/50 text-gray-200 px-2 py-1 rounded-full text-xs font-medium"
+                    >
+                      {tag}
+                    </motion.span>
+                  ))}
             </AnimatePresence>
           </div>
         </CardContent>

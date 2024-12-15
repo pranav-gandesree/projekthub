@@ -1,14 +1,23 @@
 "use client";
 
 import NewProject from "@/components/canvas/NewProject";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from "react";
 
 const Page = () => {
-  const { data: session } = useSession();
+  
+  const { status } = useSession();
+  const router = useRouter();
 
-  if (!session) {
-    redirect("/home");
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/home'); 
+    }
+  }, [status, router]);
+
+  if (status === 'loading') {
+    return <div>Loading...</div>; 
   }
 
   return <NewProject />;
