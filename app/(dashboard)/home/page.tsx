@@ -13,6 +13,9 @@ import Image from 'next/image'
 import BookmarkButton from '@/components/bookmark/BookmarkButton'
 import { Bookmark } from '@prisma/client'
 
+import { FilterOptions } from '@/components/filter/FilterOptions'
+import { SearchBar } from '@/components/filter/SearchBar'
+
 interface User {
   id: number
   name: string
@@ -28,15 +31,19 @@ interface Project {
   public: boolean;
   createdBy: User;
   createdAt: string;
+  category: string;
   tags: string[];
   bookmark: Bookmark | null;
 }
 
 export default function ProjectGallery() {
   const [projects, setProjects] = useState<Project[]>([])
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const { data: session } = useSession();
+
+  const [selectedFilter, setSelectedFilter] = useState<string>("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 15;
@@ -57,6 +64,7 @@ export default function ProjectGallery() {
         }
         const data = await response.json()
         setProjects(data)
+        setFilteredProjects(data); // initialize with all projects
       } catch (error) {
         setError('Failed to fetch public projects')
       } finally {
@@ -69,7 +77,18 @@ export default function ProjectGallery() {
   }, [session])
 
 
-  
+  useEffect(() => {
+    if (selectedFilter) {
+      setFilteredProjects(
+        projects.filter(
+          (project) => project.category.toLowerCase() === selectedFilter.toLowerCase()
+        )
+      );
+    } else {
+      setFilteredProjects(projects); // Reset to all projects if no filter
+    }
+  }, [selectedFilter, projects]);
+
 
   if (loading) {
     return (
@@ -103,7 +122,14 @@ export default function ProjectGallery() {
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <h2 className="text-4xl font-bold mb-12 text-left text-white">Discover Projects</h2>
+      <div className='flex justify-between mb-12'>
+        <h2 className="text-4xl font-bold text-left text-white">Discover Projects</h2>
+        <SearchBar/>
+        <FilterOptions
+        selectedCategory={selectedFilter}
+        onCategorySelect={(category: string) => setSelectedFilter(category)}
+      />
+      </div>
       <AnimatePresence>
 
 
