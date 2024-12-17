@@ -136,6 +136,10 @@ export default function UserProfile({ username }: { username: string }) {
     setIsEditing(false);
   };
 
+  const handleSendMessage = () => {
+    router.push(`${username}/inbox`);
+  };
+
   if (error) {
     return <div className="text-center text-red-500">{error}</div>;
     // return <PageNotFound/>;
@@ -231,6 +235,9 @@ export default function UserProfile({ username }: { username: string }) {
                     <h2 className="text-2xl font-bold text-white">
                       {user.name}
                     </h2>
+
+                    <Button onClick={handleSendMessage}>Send Message</Button>
+
                     <p className="text-gray-300">
                       {user?.userDetails?.bio || "No bio available"}
                     </p>

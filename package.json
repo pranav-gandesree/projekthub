@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "ws": "ts-node websocket-server/index.ts"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.2",
@@ -35,6 +36,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
+    "dotenv": "^16.4.7",
     "formidable": "^3.5.1",
     "framer-motion": "^11.3.28",
     "highlight.js": "^11.10.0",
@@ -59,6 +61,7 @@
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
+    "ws": "^8.18.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -70,6 +73,7 @@
     "@types/nprogress": "^0.2.3",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/ws": "^8.5.13",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "postcss": "^8",

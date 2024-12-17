@@ -16,7 +16,7 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
+  emailVerified DateTime? @map("emailVerified")
   image         String?
   accounts      Account[]
   sessions      Session[]
@@ -24,6 +24,18 @@ model User {
   bookmarks     Bookmark[] 
   userDetails   UserDetails?
   Portfolios    Portfolios[]
+  messagesSent  Message[] @relation("SenderMessages") 
+  messagesReceived Message[] @relation("RecipientMessages") 
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  senderId    String
+  recipientId String
+  content     String   @db.Text
+  createdAt   DateTime @default(now())
+  sender         User      @relation("SenderMessages", fields: [senderId], references: [id]) 
+  recipient      User      @relation("RecipientMessages", fields: [recipientId], references: [id]) 
 }
 
 
