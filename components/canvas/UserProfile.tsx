@@ -58,6 +58,8 @@ interface UserDetails {
   portfolio?: string;
 }
 
+
+
 export default function UserProfile({ username }: { username: string }) {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -76,7 +78,7 @@ export default function UserProfile({ username }: { username: string }) {
           throw new Error("Failed to fetch user data");
         }
         const userData = await response.json();
-        // console.log(userData);
+        console.log(userData);
 
         setUser(userData);
         setEditedUser(userData);
@@ -136,9 +138,47 @@ export default function UserProfile({ username }: { username: string }) {
     setIsEditing(false);
   };
 
-  const handleSendMessage = () => {
-    router.push(`${username}/inbox`);
+  // const handleSendMessage = () => {
+  //   router.push(`${username}/inbox`);
+  // };
+
+
+
+  const handleSendMessage = async () => {
+    if (!session?.user?.id) {
+      // handle unauthenticated user
+      toast({
+        title: "Error",
+        description: "Unable to send message. User not found or not logged in.",
+      });
+      return;
+    }
+
+    try {
+      // Create initial message to start the conversation
+      await fetch('/api/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          senderId: session.user.id,
+          recipientId: user?.id,
+          content: 'Started a conversation',
+        }),
+      
+      });
+  
+        // Navigate to inbox with the selected contact
+        console.log(user?.id)
+        router.push(`/${username}/inbox?contact=${user?.id}`);
+
+    }
+     catch (error) {
+      console.error('Error starting conversation:', error);
+    }
   };
+
 
   if (error) {
     return <div className="text-center text-red-500">{error}</div>;

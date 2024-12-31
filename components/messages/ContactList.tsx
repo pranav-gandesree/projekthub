@@ -22,11 +22,11 @@ export default function ContactList({ contacts, selectedContact, onSelectContact
               selectedContact.id === contact.id ? 'bg-gray-800' : ''
             }`}
           >
-            <img
+            {/* <img
               src={contact.avatar}
               alt={contact.name}
               className="w-12 h-12 rounded-full object-cover"
-            />
+            /> */}
             <div className="ml-4 flex-1">
               <div className="flex justify-between items-center">
                 <h3 className="font-semibold text-purple-300">{contact.name}</h3>

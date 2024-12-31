@@ -1,17 +1,20 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/prisma/prisma'
+import  prisma  from '@/prisma/prisma';
 
 export async function GET(req: Request) {
-  // Extract the user ID from query params, session, or headers
-  const url = new URL(req.url);
-  const userId = url.searchParams.get('userId');
-
-  if (!userId) {
-    return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
-  }
-
   try {
-    const messages = await prisma.message.findMany({
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get('userId');
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'User ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // Get all unique conversations for the user
+    const conversations = await prisma.message.findMany({
       where: {
         OR: [
           { senderId: userId },
@@ -19,35 +22,47 @@ export async function GET(req: Request) {
         ],
       },
       include: {
-        sender: true,
-        recipient: true,
+        sender: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+        recipient: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
       },
       orderBy: {
         createdAt: 'desc',
       },
+      distinct: ['senderId', 'recipientId'],
     });
 
-    const contactsMap: { [key: string]: any } = {};
-
-    messages.forEach((message) => {
-      const otherUser = message.senderId === userId ? message.recipient : message.sender;
-      if (!contactsMap[otherUser.id]) {
-        contactsMap[otherUser.id] = {
-          id: otherUser.id,
-          name: otherUser.name || 'Unknown User',
-          avatar: otherUser.image || '/default-avatar.png',
-          lastMessage: {
-            content: message.content,
-            timestamp: message.createdAt.toISOString(),
-          },
-        };
-      }
+    // Transform the conversations into contacts
+    const contacts = conversations.map(conv => {
+      const contact = conv.senderId === userId ? conv.recipient : conv.sender;
+      return {
+        id: contact.id,
+        name: contact.name || 'Anonymous',
+        avatar: contact.image || '/default-avatar.png',
+        lastMessage: {
+          content: conv.content,
+          timestamp: conv.createdAt.toISOString(),
+        },
+      };
     });
 
-    const contacts = Object.values(contactsMap);
-    return NextResponse.json(contacts, { status: 200 });
+    return NextResponse.json(contacts);
   } catch (error) {
     console.error('Error fetching contacts:', error);
-    return NextResponse.json({ error: 'Failed to fetch contacts' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch contacts' },
+      { status: 500 }
+    );
   }
 }

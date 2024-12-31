@@ -11,9 +11,11 @@ import {
   FileText,
   Bookmark,
   Briefcase,
+  MessageSquareText,
 } from "lucide-react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
+import { ChatBubbleIcon } from "@radix-ui/react-icons";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -77,6 +79,15 @@ const Sidebar = () => {
                 >
                   <Bookmark size={20} />
                   <span>Bookmarks</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={`/${session?.user?.name}/inbox`}
+                  className="flex items-center space-x-2 text-gray-300 hover:text-white"
+                >
+                  <MessageSquareText size={20} />
+                  <span>Inbox</span>
                 </Link>
               </li>
               <li>

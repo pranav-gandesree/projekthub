@@ -36,16 +36,16 @@ export default function MessageInput({ onSendMessage }: MessageInputProps) {
   };
 
   return (
-    <div className="p-4 border-t border-gray-700 bg-gray-800">
+    <div className="p-4 border-t border-gray-700 bg-gray-800 flex flex-row gap-4">
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Type a message..."
-        className="w-full p-2 bg-gray-700 text-white rounded-lg"
+        className="w-3/4 p-2 bg-gray-700 text-white rounded-lg"
       />
       <button
         onClick={handleSend}
-        className="mt-2 w-full py-2 bg-purple-600 text-white rounded-lg"
+        className=" w-1/4 mt-2 py-2 bg-purple-600 text-white rounded-lg"
       >
         Send
       </button>

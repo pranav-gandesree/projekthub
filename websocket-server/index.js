@@ -1,10 +1,15 @@
-import express from 'express';
-import http from 'http';
-import WebSocket from 'ws';
 
+import express from "express"
+import { WebSocketServer, WebSocket } from "ws";
 const app = express();
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+
+const server = app.listen(4000, ()=> {
+  console.log("Server started at http://localhost:4000");
+})
+
+
+const wss = new WebSocketServer({server})
+
 
 wss.on('connection', (ws) => {
   console.log('User connected');
@@ -22,8 +27,4 @@ wss.on('connection', (ws) => {
   ws.on('close', () => {
     console.log('User disconnected');
   });
-});
-
-server.listen(4000, () => {
-  console.log('WebSocket server listening on port 4000');
 });

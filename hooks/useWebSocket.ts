@@ -1,23 +1,63 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
+import { Message } from '@/app/types/message';
 
-const useWebSocket = (url: string, onMessage: (data: any) => void) => {
-  const ws = useRef<WebSocket | null>(null);
+export function useWebSocket(url: string) {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const wsRef = useRef<WebSocket | null>(null);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    ws.current = new WebSocket(url);
+    const ws = new WebSocket(url);
+    wsRef.current = ws;
 
-    ws.current.onopen = () => console.log("WebSocket connected");
-    ws.current.onmessage = (event) => onMessage(JSON.parse(event.data));
-    ws.current.onclose = () => console.log("WebSocket disconnected");
+    ws.onopen = () => {
+      console.log('Connected to WebSocket');
+    };
 
-    return () => ws.current?.close();
-  }, [url, onMessage]);
+    // ws.onmessage = (event) => {
+    //   const message = JSON.parse(event.data) as Message;
+    //   setMessages((prev) => [...prev, message]);
+    // };
 
-  const sendMessage = (message: any) => {
-    ws.current?.send(JSON.stringify(message));
+
+    ws.onmessage = async (event) => {
+      const data = event.data instanceof Blob 
+        ? await event.data.text() 
+        : event.data;
+    
+      try {
+        const message = JSON.parse(data) as Message;
+        setMessages((prev) => [...prev, message]);
+      } catch (error) {
+        console.error('Failed to parse message:', error, data);
+      }
+    };
+    
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, [url]);
+
+  const sendMessage = (message: Omit<Message, 'id' | 'timestamp'>) => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify(message));
+    }
   };
 
-  return { sendMessage };
-};
+  // const sendMessage = useCallback(
+  //   (message: any) => {
+  //     if (socket?.readyState === WebSocket.OPEN) {
+  //       socket.send(JSON.stringify(message));
+  //     }
+  //   },
+  //   [socket]
+  // );
 
-export default useWebSocket;
+
+  return { messages, sendMessage };
+}
