@@ -92,6 +92,14 @@ export default function UserProfile({ username }: { username: string }) {
     fetchUser();
   }, [username]);
 
+
+  useEffect(() => {
+    if (user?.id && session?.user.id) {
+      console.log(`/${username}/inbox/${session.user.id}-${user.id}`);
+    }
+  }, [user, session, username]);
+
+
   const handleEditClick = () => {
     setIsEditing(!isEditing);
   };
@@ -171,7 +179,9 @@ export default function UserProfile({ username }: { username: string }) {
   
         // Navigate to inbox with the selected contact
         console.log(user?.id)
-        router.push(`/${username}/inbox?contact=${user?.id}`);
+        
+        // router.push(`/${username}/inbox?contact=${user?.id}`);
+        router.push(`/${username}/inbox/${session.user.id}-${user?.id}`);
 
     }
      catch (error) {

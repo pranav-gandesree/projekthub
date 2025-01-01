@@ -23,6 +23,6 @@
       "@/*": ["*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "websocket-server/index.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "websocket-server/index.ts"],
   "exclude": ["node_modules"]
 }
