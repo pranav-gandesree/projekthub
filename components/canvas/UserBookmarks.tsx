@@ -66,85 +66,19 @@ const UserBookmarks = ({ username }: { username: string }) => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold mb-8 text-center">{user} Bookmarks</h2>
+      <h2 className="text-3xl font-bold mb-8 ">Your Bookmarks</h2>
       <motion.div 
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {/* {bookmarks.length > 0 ? (
-          bookmarks.map((bookmark) => (
-            <motion.div
-              key={bookmark.id}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            >
-              <Card className="overflow-hidden h-full flex flex-col">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <p className="text-md text-gray-500 mt-1">
-                      <span className="font-medium text-purple-500">
-                       {username} <span className='text-white'>created this project</span> 
-                      </span>
-                    </p>
-                     <Bookmark
-                      projectId={bookmark.id}
-                      userId={username}
-                      isBookmarked={userBookmarks.has(bookmark.id)}
-                      onToggle={handleBookmarkToggle}
-                    />
-                  </div>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  {bookmark.projectImage ? (
-                                        <div className="relative h-48 overflow-hidden">
-                                          <Image
-                                            src={bookmark.projectImage}
-                                            alt={`${bookmark.title} thumbnail`}
-                                            className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-                                            width={250}
-                                            height={200}
-                                          />
-                                          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
-                                        </div>
-                                      ) : (
-                                        <div className="h-48 bg-gradient-to-br from-purple-600 to-blue-600"></div>
-                                      )}
-                  <h3 className="text-2xl font-semibold text-slate-100 mb-2">{bookmark.projectName}</h3>
-                  <p className="text-gray-600 mb-4">{bookmark.projectDescription}</p>
-                </CardContent>
-                <CardFooter className="flex justify-start gap-4">
-                  <Button variant="outline" asChild>
-                    <a href={bookmark.projectGithubLink} target="_blank" rel="noopener noreferrer">
-                      <GithubIcon className="mr-2 h-4 w-4" />
-                      GitHub
-                    </a>
-                  </Button>
-                  {bookmark.projectLiveLink && (
-                    <Button variant="outline" asChild>
-                      <a href={bookmark.projectLiveLink} target="_blank" rel="noopener noreferrer">
-                        <ExternalLinkIcon className="mr-2 h-4 w-4" />
-                        Live Demo
-                      </a>
-                    </Button>
-                  )}
-                </CardFooter>
-              </Card>
-            </motion.div>
-          ))
-        ) : (
-          <NoBookmark/>
-        )} */}
-
-
-
 
 
 {bookmarks.length > 0 ? (
             bookmarks.map((bookmark) => (
               <motion.div
+               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 key={bookmark.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -214,7 +148,9 @@ const UserBookmarks = ({ username }: { username: string }) => {
               </motion.div>
             ))
           ) : (
-            <NoBookmark/>
+            <div className='flex justify-center items-center w-full h-full'>
+              <NoBookmark/>
+            </div>
           )}
 
 

@@ -7,7 +7,7 @@ export function LoginComponent() {
       
       <div className="relative space-y-8 p-8">
         <h1 className="text-5xl font-bold tracking-tight text-purple-400 [text-shadow:_0_2px_10px_rgb(168_85_247_/_20%)]">
-          DevConnect Platform
+          ProjektHub 
         </h1>
         
         <div className="space-y-8">

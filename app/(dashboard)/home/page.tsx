@@ -125,10 +125,10 @@ export default function ProjectGallery() {
       <div className='flex justify-between mb-12'>
         <h2 className="text-4xl font-bold text-left text-white">Discover Projects</h2>
         <SearchBar/>
-        <FilterOptions
+        {/* <FilterOptions
         selectedCategory={selectedFilter}
         onCategorySelect={(category: string) => setSelectedFilter(category)}
-      />
+      /> */}
       </div>
       <AnimatePresence>
 

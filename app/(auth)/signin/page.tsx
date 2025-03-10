@@ -1,39 +1,3 @@
-// import { LoginComponent } from '@/components/canvas/LoginComponent';
-// import SignInForm from '@/components/form/SignInForm'
-
-// const SignInPage = () => {
-//   return (
-
-//     <div className="h-screen flex">
-
-//     <div className="hidden lg:flex lg:flex-1 lg:justify-center lg:items-center">
-//       <LoginComponent/>
-//     </div>
-
-//     <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-900/50">
-//       <SignInForm/>
-//       </div>
-//   </div>
-//   );
-// };
-
-// export default SignInPage;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import { LoginComponent } from "@/components/canvas/LoginComponent";
 import SignInForm from "@/components/form/SignInForm";
 import { authOptions } from "@/lib/auth";
